@@ -79,12 +79,15 @@ tower是整个binlake集群管理平台: 使用的beego框架, 采用bootstrap�
 
   
 ## 使用说明  
+* 前提 
+    依赖于go环境
+    本地go 版本 **go version go1.12 linux/amd64**
 
 * 编译过程  
     * cd binlake-web目录  
     * bee pack 
         **安装bee {go get github.com/astaxie/beego && go get github.com/beego/bee}**  
-    * 如果成功则可以生成 tower_v4.tar.gz   
+    * 如果成功则可以生成 tower.tar.gz   
 
 * 安装使用  
     * 准备一个MySQL server 实例
