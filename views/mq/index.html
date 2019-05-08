@@ -1,0 +1,342 @@
+{{template "base/base.html" .}}
+{{define "head"}}
+<title>{{.appname}}</title>
+
+{{end}}
+{{define "body"}}
+<body class="hold-transition skin-blue sidebar-mini">
+<div id="wrapper">
+    {{template "base/navbar.html" .}}
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <!-- <section class="content-header">
+            <h1>
+                MQ管理
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="/index"><i class="fa fa-dashboard"></i>主页</a></li>
+                <li class="active">MQ管理</li>
+            </ol>
+        </section> -->
+        <div>
+            <ol class="breadcrumb">
+                <li><a href="/index">首页</a></li>
+                <li class="active">MQ管理</li>
+            </ol>
+        </div>
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>查询条件</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <form class="form-inline">
+                     <div class="form-group">
+                        <div class="input-group">
+                            <select class="combobox form-control" id="mq_group_combobox">
+                                <option value="">请选择</option>
+                                {{range $index, $elem := .UserGroups}}
+                                <option value="{{$elem.Name}}">{{$elem.Name}}</option>
+                                {{end}}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="text" name="mq_topic" placeholder="请输入topic 名称"  class="form-control mq_topic"/>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-search" type="button" onclick="filter_topic()">查询</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Main content -->
+        <div class="ibox">
+            {{template "mq/create_mq.html" . }}
+            {{template "mq/edit_mq.html" . }}
+            <div class="ibox-title">
+                <h5>查询结果</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                </div>
+            </div>
+           <!--  <div class="row">
+               <div class="col-md-8">
+                   <button type="button" class="btn btn-large btn-success" onclick="create_mq()">创建MQ规则</button>
+               </div>
+               <div align="right">
+                   <select class="combobox" id="mq_group_combobox">
+                       <option value="">请选择</option>
+                       {{range $index, $elem := .UserGroups}}
+                       <option value="{{$elem.Name}}">{{$elem.Name}}</option>
+                       {{end}}
+                   </select>
+                   <input type="text" class="mq_topic" name="mq_topic" placeholder="请输入topic 名称">
+                   <button type="button" class="glyphicon glyphicon-search" onclick="filter_topic()">搜索</button>
+               </div>
+           </div> -->
+            <div class="ibox-content">
+                <div  class="bt-position">
+                    <a class="btn btn-success btn-add-project" onclick="create_mq()">创建MQ规则</a>
+                    <!--  <button type="button" class="btn btn-large btn-success" onclick="create_filter()">创建过滤器</button> -->
+                </div>
+                <table id="mq_table"
+                       data-toggle="table"
+                       data-method="post"
+                       data-query-params="mq_post_paras"
+                       data-url="/mq/list"
+                       data-pagination="true"
+                       data-side-pagination="client"
+                       data-sort-order="desc"
+                       data-page-list="[5, 10, 20, 50, 100, 200, 1000, 2000]"
+                       class="table-striped"
+                       data-row-style="rowStyle"
+                       style="word-break:break-all; word-wrap:break-all;">
+                    <thead>
+                    <tr>
+                        <th data-field="operation" data-formatter="optFormatter" data-events="mq_action_events" class="iconGroups">操作</th>
+                        <th data-field='Topic' data-sortable="true">主题</th>
+                        <th data-field='Name' data-sortable="true">名称</th>
+                        <th data-field='WithTrx' data-sortable="true">事务标记</th>
+                        <th data-field='ProducerClass' data-sortable="true">生产类名</th>
+                        <th data-field="OrderType" data-sortable="true">顺序</th>
+                        <th data-field="FilterId" data-sortable="true">过滤规则ID</th>
+                        <th data-field='CreateTime' data-sortable="true">创建日期</th>
+                        <th data-field='UpdateTime' data-sortable="true">更新日期</th>
+                       <!--  <th data-formatter="edit_mq_formatter" data-events="mq_action_events">编辑</th>
+                       <th data-formatter="delete_mq_formatter" data-events="mq_action_events">删除</th> -->
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+</div>
+
+<script>
+    var charReg = new RegExp(/^[A-Za-z0-9]*$/);
+
+    mq_post_paras: function mq_post_paras() {
+        console.log("mq_post_paras");
+        return {"topic": $(".mq_topic").val(), "group":$("#mq_group_combobox").val()};
+    }
+
+    // 点击事件
+    window.mq_action_events = {
+        'click .edit': edit_mq_action,
+        'click .delete': delete_mq_action,
+    };
+
+    //添加`删除`列对应事件
+    /*function delete_mq_formatter(value, row, index) {
+        return '<a class="delete glyphicon glyphicon-trash" href="javascript:void(0)" title="删除">';
+    }
+
+    function edit_mq_formatter(value, row, index) {
+        return '<a class="edit glyphicon glyphicon-pencil" href="javascript:void(0)" title="编辑">';
+    }
+*/
+    function optFormatter(value, row) {
+        console.log(row);
+        var ret_butns = [];
+        ret_butns.push('<a class="edit glyphicon glyphicon-pencil" href="javascript:void(0)" title="编辑">');
+        ret_butns.push('<a class="delete glyphicon glyphicon-trash" href="javascript:void(0)" title="删除">');
+        if (ret_butns.length > 0) {
+            return ret_butns.join('');
+        } else {
+            return '';
+        }
+    }
+
+    function edit_mq_action(e, value, row, index) {
+        $.ajax({
+            type: "POST",
+            url: "/group/check",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                "group": row.Group
+            }), // 转换成json
+            success: function (rst, status) {
+                if (rst.code == 1000) {
+                    edit_filter_list(row.FilterId);
+                    init_edit_mq_modal(row);
+                    $("#edit_mq_modal").modal('show');
+                } else {
+                    // 普通用户 无权限 直接返回
+                    showMessage(rst.message);
+                }
+            }
+        });
+    }
+
+    function delete_mq_action(e, value, row, index) {
+        $.ajax({
+            type: "POST",
+            url: "/group/check",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                "group": row.Group
+            }), // 转换成json
+            success: function (rst, status) {
+                if (rst.code == 1000) {
+                    confirmDialog(row.Id, "删除确认", "确认要删除主题<b>" + row.Topic + "</b>吗?", delete_mq);
+                } else {
+                    // 普通用户 无权限 直接返回
+                    showMessage(rst.message);
+                }
+            }
+        });
+    }
+
+    function delete_mq(ruleId) {
+        $.ajax({
+            type: "POST",
+            url: "/mq/delete",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({"id": ruleId}), // 转换成json
+            success: function (rst, status) {
+                if (rst.code == 1000) {
+                    showMessage("删除主题成功!!");
+
+                    filter_topic();
+                } else {
+                    showMessage(rst.message);
+                }
+            },
+            error: function (req, data, error) {
+                console.log("error occur from server")
+            }
+        });
+    }
+
+    function create_mq() {
+        console.log("create_mq");
+        create_mq_filter_ids();
+        $("#create_mq_modal").modal('show');
+    }
+
+    function filter_topic() {
+        $("#mq_table").bootstrapTable('refreshOptions', {url: '/mq/list'});
+    }
+
+    function create_new_topic() {
+        var topic = $("#new_topic_name").val();
+        var name = $("#new_topic_mark").val();
+        var order = $("#create_mq_order_combobox").val();
+        var group = $("#create_mq_group_combobox").val();
+        var producer = $("#create_mq_producer_class_combobox").val();
+        var withTrx = $("#create_mq_with_trx").prop("checked");
+        var filter_ids = $("#create_mq_filter_ids").val();
+        var zk = $("#create_mq_cluster_combobox").val();
+
+        if (filter_ids == null || topic == "" || name == "" || order == "" ||
+            group == "" || producer == "" || filter_ids == "" || zk == "") {
+            showMessage("所需信息不能为空!!!");
+            return
+        }
+
+        if (!charReg.test(topic)) {
+            showMessage("topic不能包含字母数字以外字符");
+            return
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/mq/create",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                "topic": topic, "name": name,
+                "order": order, "group": group,
+                "producer": producer, "withTrx": withTrx,
+                "filterIds": filter_ids, "zk": zk
+            }), // 转换成json
+
+            success: function (rst, status) {
+                if (rst.code == 1000) {
+                    showMessage("新建topic成功!!");
+
+                    // 关闭页面按钮
+                    $("#create_mq_modal").modal('hide');
+
+                    filter_topic();
+                } else {
+                    showMessage(rst.message);
+                }
+            },
+            error: function (req, data, error) {
+                console.log("error occur from server")
+            }
+        });
+    }
+
+    // 保存 mq rule
+    function save_edit_mq() {
+        var ruleId = $(".edit_mq_rule_id").val();
+        var topic = $("#edit_topic_name").val();
+        var mark = $("#edit_topic_mark").val();
+        var group = $("#edit_mq_group_combobox").val();
+        var order = $("#edit_mq_order_combobox").val();
+        var producer = $("#edit_mq_producer_class_combobox").val();
+        var withTrx = $("#edit_mq_with_trx").prop("checked");
+        var filter_ids = $("#edit_mq_filter_ids").val();
+
+        if (filter_ids == null || topic == "" || mark == "" || order == "" ||
+            group == "" || producer == "" || filter_ids == "") {
+            showMessage("所需信息不能为空!!!");
+            return
+        }
+
+        if (!charReg.test(topic)) {
+            showMessage("topic不能包含字母数字以外字符");
+            return
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/mq/update",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                "topic": topic, "mark": mark,
+                "order": order, "group": group,
+                "producer": producer, "withTrx": withTrx,
+                "filterIds": filter_ids, "id": ruleId
+            }), // 转换成json
+
+            success: function (rst, status) {
+                if (rst.code == 1000) {
+                    showMessage("新建topic成功!!");
+
+                    // 关闭页面按钮
+                    $("#edit_mq_modal").modal('hide');
+
+                    filter_topic();
+                } else {
+                    showMessage(rst.message);
+                }
+            },
+            error: function (req, data, error) {
+                console.log("error occur from server")
+            }
+        });
+    }
+
+</script>
+</body>
+{{end}}

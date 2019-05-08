@@ -1,0 +1,54 @@
+<div class="modal fade  bs-example-modal-lg" id="create_instance_modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title create_instance_modal_title">创建MySQL实例</h4>
+            </div>
+            <div class="modal-body" id="create_instance_modal_content">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label class="form-label"><em>*</em>分组名称</label>
+                        <select class="combobox form-control" id="create_instance_group_combobox">
+                            <option value="">请选择</option>
+                            {{range $index, $elem := .adminGroups}}
+                            <option value="{{$elem.Name}}">{{$elem.Name}}</option>
+                            {{end}}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                            <label class="form-label"><em>*</em>所属机房</label>
+                            <select class="combobox form-control" id="create_instance_cluster_combobox">
+                                <option value="">请选择</option>
+                                {{range $index, $elem := .cluster}}
+                                <option value="{{$elem.Zk}}">{{$elem.Mark}}</option>
+                                {{end}}
+                            </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><em>*</em>域名列表</label>
+                        <textarea class="form-control" rows="3" id="dump_instances"
+                                  placeholder="格式： 域名:端口， 多条记录回车换行..."></textarea>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="create_new_instance()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $("#create_instance_modal").on("hide.bs.modal", function () {
+        // 清空
+        $("#new_group_name").val("");
+        $("#new_group_mark").val("");
+        $("#dump_instances").val("");
+    });
+</script>

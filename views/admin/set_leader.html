@@ -1,0 +1,37 @@
+<div class="modal fade  bs-example-modal-lg" id="admin_set_leader_modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title admin_set_leader_modal_title">设置leader</h4>
+            </div>
+            <div class="modal-body" id="admin_set_leader_modal_content">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label class="form-label">选择leader</label>
+                        <select class="combobox form-control" id="wave_hosts_combobox">
+                            <option value="">请选择</option>
+                            {{range $index, $elem := .waveHosts}}
+                            <option value="{{$elem.host}}">{{$elem.host}}</option>
+                            {{end}}
+                        </select>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="admin_set_leader()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#admin_set_leader_modal").on("hide.bs.modal", function () {
+        // 清空
+        $("#wave_hosts_combobox").val("");
+    });
+</script>

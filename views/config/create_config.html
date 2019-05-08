@@ -1,0 +1,113 @@
+<div class="modal fade  bs-example-modal-lg" id="create_config_modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title create_config_modal_title">创建新配置</h4>
+            </div>
+            <div class="modal-body" id="create_config_modal_content">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label class="form-label">关键字缩写</label>
+                        <input type="text"
+                               class="form-control create_config_keyword"
+                               name="create_config_keyword"
+                               placeholder="关键字">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">关键字备注</label>
+                        <input type="text"
+                               class="form-control create_config_mark"
+                               name="create_config_mark"
+                               placeholder="关键字备注">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">wave dns</label>
+                        <input type="text"
+                               class="form-control create_config_dns"
+                               name="create_config_dns"
+                               placeholder="wave 集群dns">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">zk地址</label>
+                        <input type="text"
+                               class="form-control create_config_zk"
+                               name="create_config_zk"
+                               placeholder="zookeeper 地址">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Zk根路径</label>
+                        <input type="text"
+                               class="form-control create_config_zk_path"
+                               name="create_config_zk_path"
+                               placeholder="zk根路径 监听器监听的根目录{用于监听增删改节点信息}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">从库ServerId</label>
+                        <input type="text"
+                               class="form-control create_config_slave_id"
+                               name="create_config_slave_id"
+                               placeholder="MySQL dump 从库server id">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">从库UUID</label>
+                        <input type="text"
+                               class="form-control create_config_slave_uuid"
+                               name="create_config_slave_uuid"
+                               placeholder="从库UUID">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">dbs api地址前缀</label>
+                        <input type="text"
+                               class="form-control create_config_dbsurl"
+                               name="create_config_dbsurl"
+                               placeholder="dbs api地址前缀">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">dbs http token</label>
+                        <input type="text"
+                               class="form-control create_config_dbstoken"
+                               name="create_config_dbstoken"
+                               placeholder="dbs http token">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">mq 生产者地址</label>
+                        <input type="text"
+                               class="form-control create_config_mqaddr"
+                               name="create_config_mqaddr"
+                               placeholder="mq 生产者地址">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Dump服务集群IP</label>
+                        <textarea class="form-control create_config_server_ips" rows="3" name="create_config_server_ips"
+                                  placeholder="格式： ip 多条记录回车换行..."></textarea>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="create_config()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#create_config_modal").on("hide.bs.modal", function () {
+        // 清空
+        $(".create_config_keyword").val("");
+        $(".create_config_mark").val("");
+        $(".create_config_dns").val("");
+        $(".create_config_zk").val("");
+        $(".create_config_zk_path").val("");
+        $(".create_config_slave_id").val("");
+        $(".create_config_slave_uuid").val("");
+        $(".create_config_dbsurl").val("");
+        $(".create_config_dbstoken").val("");
+        $(".create_config_mqaddr").val("");
+        $(".create_config_server_ips").val("");
+    });
+</script>

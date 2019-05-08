@@ -1,0 +1,144 @@
+<div class="modal fade  bs-example-modal-lg" id="create_mq_modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title create_mq_modal_title">创建topic</h4>
+            </div>
+            <div class="modal-body" id="create_mq_modal_content">
+                <form class="form-horizontal" role="form">
+                    <!--  <div class="list-group-item list-group-item-success">
+                       <strong>topic名称</strong><br>
+                       <span>只能是字符串</span><br>
+                       <strong>备注</strong><br>
+                       <span>说明topic的作用</span><br>
+                       <strong>顺序类型</strong><br>
+                       <span>业务主鍵順序: 消息按照业务主键严格时序发送</span><br>
+                       <span>表顺序: 消息按照表严格时序发送</span><br>
+                       <span>库顺序: 消息按照MySQL 物理库严格时序发送</span><br>
+                       <span>实例顺序: 整个MySQL实例消息严格按照时序发送</span><br>
+                       <span>完全乱序: 消息完全乱序发送 没有任何顺序</span><br>
+                       <strong>事务标记</strong><br>
+                       <span>是否发送begin/commit消息体</span><br>
+                       <strong>目标MQ</strong><br>
+                       <span>目前支持JMQ/kafka两种MQ</span>
+                    </div> -->
+                    <div class="form-group">
+                        <label class="form-label"><em>*</em>集群名称</label>
+                        <select class="combobox form-control" id="create_mq_cluster_combobox">
+                            <option value="">请选择</option>
+                            {{range $index, $elem := .cluster}}
+                            <option value="{{$elem.Zk}}">{{$elem.Mark}}</option>
+                            {{end}}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><em>*</em>topic名称</label>
+                        <input type="text" maxlength="36" class="form-control"
+                               id="new_topic_name" placeholder="请输入topic名称只能是字符串">
+                        <label class="label label-warning">只能是字符串</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><em>*</em>备注</label>
+                        <input type="text" class="form-control" id="new_topic_mark" placeholder="请输入备注">
+                        <label class="label label-warning">说明topic的作用</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><em>*</em>分组名称</label>
+                        <select class="combobox form-control" id="create_mq_group_combobox">
+                            <option value="">请选择</option>
+                            {{range $index, $elem := .adminGroups}}
+                            <option value="{{$elem.Name}}">{{$elem.Name}}</option>
+                            {{end}}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label"><em>*</em>目标MQ</label>
+                        <select class="combobox form-control" id="create_mq_producer_class_combobox">
+                            <option value="">请选择</option>
+                            <option value="com.jd.binlog.produce.mq.impl.Kafka100Producer">JMQ</option>
+                            <option value="com.jd.binlog.produce.mq.impl.Kafka100Producer">KAFKA100</option>
+                        </select>
+                        <label class="label label-warning">目前支持JMQ/kafka两种MQ</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="create_mq_with_trx"><em>*</em>事务标记</label>
+                        <input type="checkbox" class="form-check-input" id="create_mq_with_trx">
+                        <label class="label label-warning">是否发送begin/commit事务消息</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><em>*</em>过滤器ID</label>
+                        <select class="js-example-responsive form-control" 
+                                multiple="multiple" id="create_mq_filter_ids" name="create_mq_filter_ids"></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><em>*</em>顺序类型</label>
+                        <select class="combobox form-control" id="create_mq_order_combobox">
+                            <option value="">请选择</option>
+                            <option value="BUSINESS_KEY_ORDER">业务主键顺序</option>
+                            <option value="TABLE_ORDER">表顺序</option>
+                            <option value="DB_ORDER">库顺序</option>
+                            <option value="INSTANCE_ORDER">实例顺序</option>
+                            <option value="NO_ORDER">完全乱序</option>
+                        </select>
+                         <div style="margin-left: 120px;margin-top: 10px;width: 39%" class="list-group-item list-group-item-success">
+                            <p><span>业务主键顺序:</span>消息按照业务主键严格时序发送</p>
+                            <p><span>表顺序:</span>消息按照表严格时序发送</p>
+                            <p><span>库顺序:</span> 消息按照MySQL 物理库严格时序发送</p>
+                            <p><span>实例顺序: </span>整个MySQL实例消息严格按照时序发送</p>
+                            <p><span>完全乱序: </span>消息完全乱序发送 没有任何顺序</p>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="create_new_topic()">创建</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function create_mq_filter_ids() {
+        $('#create_mq_filter_ids').select2({
+            tags: true
+        });
+
+        // create_mq_filter_ids
+        $.ajax({
+            type: "POST",
+            url: "/filter/admin/list",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({"name": ""}), // 空串
+            success: function (rst, status) {
+                console.log(rst);
+                var ids = new Array();
+                $.each(rst, function (i, v) {
+                    ids.push({
+                        id: v.Id,
+                        text: v.Name,
+                    });
+                });
+
+                $('#create_mq_filter_ids').select2({
+                    data: ids
+                });
+            }
+        });
+    }
+
+    $("#create_mq_modal").on("hide.bs.modal", function () {
+        // 清空
+        $("#new_topic_name").val("");
+        $("#new_topic_mark").val("");
+        $("#create_mq_type_combobox").val("");
+        $("#create_mq_group_combobox").val("");
+        $("#create_mq_producer_class_combobox").val("");
+        $("#create_mq_filter_ids").val([]);
+    });
+</script>

@@ -1,0 +1,221 @@
+{{template "base/base.html" .}}
+{{define "head"}}
+<title>{{.appname}}</title>
+
+{{end}}
+{{define "body"}}
+<body class="hold-transition skin-blue sidebar-mini">
+<div id="wrapper">
+    {{template "base/navbar.html" .}}
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <!-- <section class="content-header">
+            <h1>
+                实例信息管理
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="/index"><i class="fa fa-dashboard"></i>主页</a></li>
+                <li class="active">实例信息管理</li>
+            </ol>
+        </section> -->
+        <div>
+            <ol class="breadcrumb">
+                <li><a href="/index">首页</a></li>
+                <li class="active">实例信息管理</li>
+            </ol>
+        </div>
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>查询条件</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <form class="form-inline">
+                     <div class="form-group">
+                        <div class="input-group">
+                            <select class="combobox form-control" id="instance_group_combobox">
+                                <option value="">请选择</option>
+                                {{range $index, $elem := .UserGroups}}
+                                <option value="{{$elem.Name}}">{{$elem.Name}}</option>
+                                {{end}}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="text" name="host" placeholder="请输入host"  class="form-control instance_host"/>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-search" type="button" onclick="filter_instance()">查询</button>
+                </form>
+            </div>
+        </div>
+        <!-- Main content -->
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>查询结果</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                </div>
+            </div>
+            {{template "instance/create_instance.html" . }}
+            <!-- <div class="row">
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-large btn-success" onclick="create_instance()">创建实例</button>
+                </div>
+                <div align="right">
+                    <select class="combobox" id="instance_group_combobox">
+                        <option value="">请选择</option>
+                        {{range $index, $elem := .UserGroups}}
+                        <option value="{{$elem.Name}}">{{$elem.Name}}</option>
+                        {{end}}
+                    </select>
+                    <input type="text" class="instance_host" name="host" placeholder="请输入host">
+                    <button type="button" class="glyphicon glyphicon-search" onclick="filter_instance()">搜索</button>
+                </div>
+            </div> -->
+            <div class="ibox-content">
+                 <div  class="bt-position">
+                    <a class="btn btn-success btn-add-project" onclick="create_instance()">创建实例</a>
+                    <!--  <button type="button" class="btn btn-large btn-success" onclick="create_filter()">创建过滤器</button> -->
+                </div>
+                <table id="instance_table"
+                       data-toggle="table"
+                       data-method="post"
+                       data-query-params="instance_post_paras"
+                       data-url="/instance/list"
+                       data-pagination="true"
+                       data-side-pagination="client"
+                       data-sort-order="desc"
+                       data-page-list="[5, 10, 20, 50, 100, 200, 1000, 2000]"
+                       class="table-striped"
+                       data-row-style="rowStyle"
+                       style="word-break:break-all; word-wrap:break-all;">
+                    <thead>
+                    <tr>
+                        <th data-formatter="delete_instance_formatter" data-events="instance_action_events" class="iconGroups">操作</th>
+                        <th data-field='Host' data-sortable="true">MySQL host</th>
+                        <th data-field='Port' data-sortable="true">端口</th>
+                        <th data-field='SlaveId' data-sortable="true">从库ID</th>
+                        <th data-field='User' data-sortable="true">用户名</th>
+                        <th data-field='CreateTime' data-sortable="true">创建日期</th>
+                        <th data-field='UpdateTime' data-sortable="true">更新日期</th>    
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+</div>
+
+<script>
+    instance_post_paras: function instance_post_paras() {
+        console.log("instance_post_paras");
+        return {"host": $(".instance_host").val(), "group": $("#instance_group_combobox").val()};
+    }
+
+    // 点击事件
+    window.instance_action_events = {
+        'click .delete': delete_instance_action
+    };
+
+    function delete_instance_formatter() {
+        return '<a class="delete glyphicon glyphicon-trash" href="javascript:void(0)" title="删除">';
+    }
+
+    function delete_instance_action(e, value, row, index) {
+        var group = $("#instance_group_combobox").val();
+        $.ajax({
+            type: "POST",
+            url: "/group/check",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                "group": group
+            }), // 转换成json
+            success: function (rst, status) {
+                if (rst.code == 1000) {
+                    confirmDialog(row.Id, "删除确认", "确认要删除数据库实例<b>" + row.Host + ":" + row.Port + "</b>吗?", delete_instance);
+                } else {
+                    // 普通用户 无权限 直接返回
+                    showMessage(rst.message);
+                }
+            }
+        });
+    }
+
+    function delete_instance(instanceId) {
+        $.ajax({
+            type: "POST",
+            url: "/instance/delete",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({"id": instanceId}), // 转换成json
+            success: function (rst, status) {
+                if (rst.code == 1000) {
+                    showMessage("删除数据库实例<b>成功</b>>!!");
+
+                    filter_instance();
+                } else {
+                    showMessage(rst.message);
+                }
+            },
+            error: function (req, data, error) {
+                console.log("error occur from server")
+            }
+        });
+    }
+
+    function create_instance() {
+        console.log("create_instance");
+        $("#create_instance_modal").modal('show');
+    }
+
+
+    function create_new_instance() {
+        var group = $("#create_instance_group_combobox").val();
+        var domains = $("#dump_instances").val();
+        var zk = $("#create_instance_cluster_combobox").val();
+
+        if (group == "" || domains == "" || zk == "") {
+            showMessage("传入参数不能为<b>空</b>");
+            return
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/instance/create",
+            data: JSON.stringify({"group": group, "hosts": domains.split("\n"), "zk": zk}),
+            success: function (data, status) {
+                if (data.code == 1000) {
+                    showMessage("创建数据库实例成功 请等待授权!!!");
+
+                    $("#create_instance_modal").modal('hide');
+
+                    filter_instance();
+                    return
+                }
+                showMessage(data.message);
+            },
+            error: function (req, data, error) {
+            }
+        });
+    }
+
+    function filter_instance() {
+        $("#instance_table").bootstrapTable('refreshOptions', {url: '/instance/list'});
+    }
+</script>
+</body>
+{{end}}

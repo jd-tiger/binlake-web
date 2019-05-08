@@ -1,0 +1,58 @@
+<div class="modal fade  bs-example-modal-lg wrap" id="monitor_detail_modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                </button>
+                <div class="control-label" id="compare_detail_title">
+                </div>
+            </div>
+            <div class="modal-body" id="monitor_detail_modal_content">
+                <form class="form-horizontal" role="form">
+                    <div class="control-group row">
+                        <div class="col-md-2 text-center"><label class="control-label">标签</label></div>
+                        <div class="col-md-5 text-center"><label class="control-label alig">Dump位置</label></div>
+                        <div class="col-md-5 text-center"><label class="control-label">数据库位置</label></div>
+                    </div>
+                    <br>
+                    <div class="control-group row" id="detail_modal_binlog_file">
+                    </div>
+                    <br>
+                    <div class="control-group row" id="detail_modal_binlog_pos">
+                    </div>
+                    <br>
+                    <div class="control-group row" id="detail_modal_binlog_gtid">
+                    </div>
+                    <br>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function init_detail_monitor_modal(infos) {
+        $("#compare_detail_title").empty();
+        $("#compare_detail_title").append("<h4 class=\"modal-title\">" + infos[0].Instance + " binlog 位置对照" + "</h4>");
+
+        $("#detail_modal_binlog_file").empty();
+        $("#detail_modal_binlog_file").append(
+            "<div class=\"col-md-2\"><label class=\"control-label\">" + infos[0].Label + "</label></div>" +
+            "<div class=\"col-md-5\"><input type=\"text\"class=\"form-control\" disabled='disabled' value='" + infos[0].Slave + "'></div>" +
+            "<div class=\"col-md-5\"><input type=\"text\"class=\"form-control\" disabled='disabled' value=' " + infos[0].Master + "'></div>");
+
+        $("#detail_modal_binlog_pos").empty();
+        $("#detail_modal_binlog_pos").append(
+            "<div class=\"col-md-2\"><label class=\"control-label\">" + infos[1].Label + "</label></div>" +
+            "<div class=\"col-md-5\"><input type=\"text\"class=\"form-control\" disabled='disabled' value='" + infos[1].Slave + "'></div>" +
+            "<div class=\"col-md-5\"><input type=\"text\"class=\"form-control\" disabled='disabled' value=' " + infos[1].Master + "'></div>"
+        );
+
+        $("#detail_modal_binlog_gtid").empty();
+        $("#detail_modal_binlog_gtid").append(
+            "<div class=\"col-md-2\"><label class=\"control-label\">" + infos[2].Label + "</label></div>" +
+            "<div class=\"col-md-5\"><input type=\"text\"class=\"form-control\" disabled='disabled' value='" + infos[2].Slave + "'></div>" +
+            "<div class=\"col-md-5\"><input type=\"text\"class=\"form-control\" disabled='disabled' value=' " + infos[2].Master + "'></div>"
+        );
+    }
+</script>

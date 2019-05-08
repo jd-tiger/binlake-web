@@ -1,0 +1,99 @@
+<div class="modal fade" id="confirm_dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+                        class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="confirm_modal_title"></h4>
+            </div>
+            <div class="modal-body" id="confirm_modal_content">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="doConfirm()">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="message_dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+                        class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="message_modal_title">温馨提示</h4>
+            </div>
+            <div class="modal-body" id="message_modal_content"
+                 style="width:auto; display:inline-block !important; display:inline; ">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--<div class="modal fade" id="progressBar">-->
+    <!--<div class="modal-body" style="top: 450px;">-->
+        <!--<div class="progress">-->
+            <!--<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45"-->
+                 <!--aria-valuemin="0"-->
+                 <!--aria-valuemax="100" style="width: 100%">-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+
+    <!--</div>-->
+
+<!--</div>-->
+
+
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="progressBar">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-body" style="top: 450px;">
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45"
+                     aria-valuemin="0"
+                     aria-valuemax="100" style="width: 100%">
+                    玩命加载中, 请稍后 。。。。。。
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var confirmArg;
+    var confirmFunc;
+    //显示修改接口对话框
+    function confirmDialog(arg, title, content, func) {
+        confirmArg = arg;
+        confirmFunc = func;
+
+        $("#confirm_modal_title").html(title);
+        $("#confirm_modal_content").html(content);
+        $("#confirm_dialog").modal('show');
+    }
+
+    function doConfirm() {
+        $("#confirm_dialog").modal('hide');
+        confirmFunc(confirmArg);
+    }
+
+
+    function showMessage(content) {
+        if (content == "<h3></h3>Forbidden") {
+            top.location.reload();
+            $("#message_modal_content").html("<h3>会话超时，重新登录</h3>");
+            $("#message_dialog").modal('show');
+            return;
+        }
+        $("#message_modal_content").html(content);
+        $("#message_dialog").modal('show');
+    }
+
+</script>
+

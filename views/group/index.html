@@ -1,0 +1,198 @@
+{{template "base/base.html" .}}
+{{define "head"}}
+<title>{{.appname}}</title>
+
+{{end}}
+{{define "body"}}
+<body class="hold-transition skin-blue sidebar-mini">
+<div id="wrapper">
+{{template "base/navbar.html" .}}
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <!-- <section class="content-header">
+            <h1>
+                分组管理
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="/index"><i class="fa fa-dashboard"></i> 主页</a></li>
+                <li class="active">分组管理</li>
+            </ol>
+        </section> -->
+        <div>
+            <ol class="breadcrumb">
+                <li><a href="/index">首页</a></li>
+                <li class="active">分组管理</li>
+            </ol>
+        </div>
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>查询条件</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <form class="form-inline">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="text" class="group-likely form-control" name="group-likely" placeholder="输入分组名">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-search" type="button" onclick="filter_groups()">查询</button>
+                </form>
+            </div>
+        </div>
+        <!--data-method="get"-->
+        <!-- Main content -->
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>查询结果</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                </div>
+            </div>
+            {{template "group/create_group.html" . }}
+            {{template "group/edit_group.html" . }}
+            <div class="ibox-content">
+                <div  class="bt-position">
+                    <a class="btn btn-success btn-add-project" onclick="create_group()">创建组</a>
+                </div>
+                <table id="user_group_table"
+                       data-method="post"
+                       data-toggle="table"
+                       data-url="/group/list"
+                       data-query-params="ugPostParas"
+                       data-pagination="true"
+                       data-side-pagination="client"
+                       data-sort-order="desc"
+                       data-page-list="[5, 10, 20, 50, 100, 200, 1000, 2000]"
+                       data-row-style="rowStyle"
+                       class="table-striped"
+                       style="word-break:break-all; word-wrap:break-all;">
+                    <thead>
+                    <tr>
+                        <th data-field="operation" data-formatter="groupsFormatter" data-events="groupsActionEvents">操作</th>
+                        <th data-field='Name' data-sortable="true">组名称</th>
+                        <th data-field='Mark' data-sortable="true">备注</th>
+                        <!--<th data-field='Role' data-sortable="true">角色</th>-->
+                        <th data-field='CreateTime' data-sortable="true">创建日期</th>
+                        <th data-field='UpdateTime' data-sortable="true">更新日期</th>
+                        <!-- <th data-field="操作" data-formatter="groupsFormatter" data-events="groupsActionEvents">操作</th> -->
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+</div>
+
+<script>
+    ugPostParas: function ugPostParas() {
+        console.log($(".group-likely").val());
+        return {"name": $(".group-likely").val()};
+    }
+
+    function groupsFormatter(value, row, index) {
+        console.log(row);
+        return '<a class="view-groups glyphicon glyphicon-pencil" href="javascript:void(0)" title="查看">';
+    }
+
+    // 点击事件
+    window.groupsActionEvents = {
+        'click .view-groups ': view_groups
+    };
+
+    function create_group() {
+        console.log("create_group");
+        $("#create_group_modal").modal('show');
+    }
+
+    function view_groups(e, value, row, index) {
+        console.log("view_groups 查看分组");
+
+        // 查看分组下的所有成员信息
+        initEditGroupModal({"name": row.Name, "groupId": row.GroupId});
+        $("#editGroupModal").modal('show');
+    }
+
+    function filter_groups() {
+        console.log("filter_groups");
+        $("#user_group_table").bootstrapTable('refreshOptions', {url: '/group/list'})
+    }
+
+    var charReg = new RegExp(/^[A-Za-z]*$/);
+
+    // 创建信的分组
+    function create_new_group() {
+        var group = $("#new_group_name").val().trim();
+        var mark = $("#new_group_mark").val().trim();
+        if (group == "" || mark == "") {
+            showMessage("<b>分组名</b>和<b>备注</b>不允许为空字符串");
+            return
+        }
+
+        if (!charReg.test(group)) {
+            showMessage("<b>分组名</b>只能是字母[a-zA-Z]组合");
+            return
+        }
+
+        // create new group
+        $.ajax({
+            type: "POST",
+            url: "/group/create",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({"name": group, "mark": mark}), // 转换成json
+            success: function (rst, status) {
+                if (rst.code == 1000) {
+                    showMessage("新建用户分组成功");
+
+                    // 关闭页面按钮
+                    $("#create_group_modal").modal('hide');
+
+                    filter_groups(); // 刷新 用户分组主页
+                } else {
+                    showMessage(rst.message);
+                }
+            },
+            error: function (req, data, error) {
+                console.log("error occur from server")
+            }
+        });
+    }
+
+    function deleteGroup(group) {
+        // 删除 分组
+        $.ajax({
+            type: "POST",
+            url: "/group/delete",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({"name": group}), // 空串
+            success: function (rst, status) {
+
+                if (rst.code == 1000) {
+                    // 当前分组已经删除
+                    $("#editGroupModal").modal('hide');
+
+                    // 刷新
+                    filter_groups();
+                } else {
+                    showMessage("删除分组 " + group + " 失败");
+                }
+            }
+        });
+    }
+
+</script>
+</body>
+{{end}}

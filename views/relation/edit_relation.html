@@ -1,0 +1,130 @@
+<div class="modal fade  bs-example-modal-lg" id="edit_relation_modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title edit_relation_modal_title">编辑关联关系</h4>
+            </div>
+            <div class="modal-body" id="edit_relation_modal_content">
+                <form class="form-horizontal" role="form">
+                    <!-- <div class="list-group-item list-group-item-success">
+                        <strong>注意</strong><br>
+                        <span>一个MySQL实例仅且属于一个分组</span><br>
+                        <strong>host</strong><br>
+                        <span>实例信息</span><br>
+                        <strong>消息格式</strong><br>
+                        <span>protobuf: 默认采用protobuf格式</span><br>
+                        <span>avro: avro 是大数据选择的格式</span><br>
+                        <strong>存储类型</strong><br>
+                        <span>MQ: 消息队列存储类型包括kafka/jmq</span><br>
+                        <span>KV: 目标存储为KV {类似redis/jimdb}</span><br>
+                        <strong>规则列表</strong>
+                        <span><b>规则管理</b>页面的规则列表</span><br>
+                    </div> -->
+                    <span aria-hidden="true" class="edit_relation_rule_id"></span>
+                    <div class="form-group">
+                        <label class="form-label"><em>*</em>host</label>
+                        <select class="combobox form-control" id="edit_relation_host_combobox" disabled="disabled">
+                        </select>
+                        <label class="label label-warning">实例信息</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><em>*</em>消息格式</label>
+                        <select class="combobox form-control" id="edit_relation_format_combobox" disabled="disabled">
+                            <option value="">请选择</option>
+                            <option value="com.jd.binlog.convert.ProtobufConverter">protobuf</option>
+                            <option value="com.jd.binlog.convert.AvroConverter">avro</option>
+                        </select>
+                        <label class="label label-warning">protobuf: 默认采用protobuf格式</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><em>*</em>存储类型</label>
+                        <select class="combobox form-control" id="edit_relation_storage_type_combobox" disabled="disabled">
+                            <option value="">请选择</option>
+                            <option value="MQ_STORAGE">MQ</option>
+                            <option value="KV_STORAGE">KV</option>
+                        </select>
+                        <label class="label label-warning">MQ:消息队列存储类型包括kafka/jmq; KV:目标存储为KV,如redis/jimdb(暂不支持)</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><em>*</em>分组名称</label>
+                        <select class="combobox form-control" id="edit_relation_group_combobox" disabled="disabled">
+                            <option value="">请选择</option>
+                            {{range $index, $elem := .adminGroups}}
+                            <option value="{{$elem.Name}}">{{$elem.Name}}</option>
+                            {{end}}
+                        </select>
+                        <label class="label label-warning">一个MySQL实例仅可属于一个分组</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><em>*</em>主题列表</label>
+                        <select class="js-example-responsive form-control" 
+                                multiple="multiple" id="edit_relation_rule_ids"
+                                name="edit_relation_rule_ids"></select>
+                        <label class="label label-warning">MQ管理页面的主题列表</label>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="save_edit_relation()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 初始化
+    function init_edit_relation_modal(row) {
+        $('#edit_relation_rule_ids').select2({
+            tags: true
+        });
+
+        // edit_mq_filter_ids
+        $.ajax({
+            type: "POST",
+            url: "/rule/list",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({"name": ""}), // 空串
+            success: function (rst, status) {
+                console.log(rst);
+                var ids = new Array();
+                $.each(rst, function (i, v) {
+                    ids.push({
+                        id: v.RuleId,
+                        text: v.Name,
+                    });
+                });
+
+                $('#edit_relation_rule_ids').select2({
+                    data: ids
+                });
+            }
+        });
+
+        $("#edit_relation_host_combobox").empty();
+        var selected = "<option value=''>请选择</option>";
+        selected += ("<option value='" + row.InstanceId + "'>" + row.Host + ":" + row.Port + "</option>");
+        $("#edit_relation_host_combobox").append(selected);
+        $("#edit_relation_host_combobox").val(row.InstanceId);
+
+        $("#edit_relation_group_combobox").val(row.Group); // 选中 分组名称
+        $("#edit_relation_storage_type_combobox").val(row.StorageType);
+        $("#edit_relation_format_combobox").val(row.ConvertClass);
+
+    }
+
+    $("#edit_relation_modal").on("hide.bs.modal", function () {
+        // 清空
+        $("#edit_relation_host_combobox").val("");
+        $("#edit_relation_storage_type_combobox").val("");
+        $("#edit_relation_format_combobox").val("");
+        $("#edit_relation_group_combobox").val("");
+        $("#edit_relation_rule_ids").val("");
+    });
+
+</script>

@@ -1,0 +1,37 @@
+<div class="modal fade  bs-example-modal-lg" id="create_group_modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title create_group_modal_title">创建分组</h4>
+            </div>
+            <div class="modal-body" id="create_group_modal_content">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label class="form-label">分组名称</label>
+                        <input type="text" class="form-control" id="new_group_name" placeholder="请输入分组名">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">备注</label>
+                        <input type="text" class="form-control" id="new_group_mark" placeholder="请输入备注">
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="create_new_group()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#create_group_modal").on("hide.bs.modal", function () {
+        // 清空
+        $("#new_group_name").val("");
+        $("#new_group_mark").val("");
+    });
+</script>

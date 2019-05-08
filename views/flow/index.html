@@ -1,0 +1,350 @@
+{{template "base/base.html" .}}
+{{define "head"}}
+<title>{{.appname}}</title>
+
+{{end}}
+{{define "body"}}
+<body class="hold-transition skin-blue sidebar-mini">
+<div id="wrapper">
+    {{template "base/navbar.html" .}}
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <!-- <section class="content-header">
+            <h1>
+                流程管理
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="/index"><i class="fa fa-dashboard"></i>主页</a></li>
+                <li class="active">流程管理</li>
+            </ol>
+        </section> -->
+        <div>
+            <ol class="breadcrumb">
+                <li><a href="/index">首页</a></li>
+                <li class="active">流程管理</li>
+            </ol>
+        </div>
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>查询条件</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <form class="form-inline">
+                     <div class="form-group">
+                        <div class="input-group">
+                            <select class="combobox form-control" id="flow_group_combobox">
+                                <option value="">请选择</option>
+                                {{range $index, $elem := .UserGroups}}
+                                <option value="{{$elem.Name}}">{{$elem.Name}}</option>
+                                {{end}}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="text" name="regular_expression" placeholder="输入MySQL host"  class="form-control regular_expression"/>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-search" type="button" onclick="flow_search()">查询</button>
+                </form>
+            </div>
+        </div>
+        <!-- Main content -->
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>查询结果</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                </div>
+            </div>
+            {{template "filter/create_filter.html" . }}
+            {{template "filter/edit_filter.html" . }}
+
+           <!--  <div class="row">
+               <div class="col-md-8">
+                   <button type="button" class="btn btn-large btn-success" onclick="flow_auth_process()">流程申请</button>
+                   <button type="button" class="btn btn-large btn-success" onclick="flow_auth_grant()">授权申请</button>
+                   <button type="button" class="btn btn-large btn-success" onclick="flow_start_dump()">开启Dump</button>
+               </div>
+               <div align="right">
+                   <select class="combobox" id="flow_group_combobox">
+                       <option value="">请选择</option>
+                       {{range $index, $elem := .UserGroups}}
+                       <option value="{{$elem.Name}}">{{$elem.Name}}</option>
+                       {{end}}
+                   </select>
+                   <input type="text" class="host" name="host" placeholder="输入MySQL host">
+                   <button type="button" class="glyphicon glyphicon-search" onclick="flow_search()">搜索</button>
+               </div>
+           </div> -->
+            <div class="ibox-content">
+                <div  class="bt-position">
+                    <a class="btn btn-success btn-add-project" onclick="flow_auth_process()">流程申请</a>
+                    <a class="btn btn-success btn-add-project" onclick="flow_auth_grant()">授权申请</a>
+                    <a class="btn btn-success btn-add-project" onclick="flow_start_dump()">开启Dump</a>
+                    <!--  <button type="button" class="btn btn-large btn-success" onclick="create_filter()">创建过滤器</button> -->
+                </div>
+                <table id="flow_table"
+                       data-toggle="table"
+                       data-method="post"
+                       data-url="/flow/list"
+                       data-query-params="flow_post_paras"
+                       data-pagination="true"
+                       data-side-pagination="client"
+                       data-sort-order="desc"
+                       data-page-list="[5, 10, 20, 50, 100, 200, 1000, 2000]"
+                       data-row-style="rowStyle"
+                       class="table-striped"
+                       data-click-to-select="true"
+                       style="word-break:break-all; word-wrap:break-all;">
+                    <thead>
+                    <tr>
+                        <th data-field="state" data-checkbox="true">全选</th>
+                        <th data-field='Host' data-sortable="true">MySQL实例</th>
+                        <th data-field='Port' data-sortable="true">端口</th>
+                        <th data-field='Status' data-sortable="true">流程审批状态</th>
+                        <th data-field='CreateTime' data-sortable="true">创建日期</th>
+                        <th data-field='UpdateTime' data-sortable="true">更新日期</th>
+                        <th data-formatter="flow_formatter">查看审批流程</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+</div>
+
+<script>
+
+    flow_post_paras: function flow_post_paras() {
+        console.log("flow_post_paras");
+        return {"host": $(".regular_expression").val(), "group": $("#flow_group_combobox").val()}
+    }
+
+    function flow_formatter(value, row, index) {
+        return '<a class="link glyphicon glyphicon-link" href="' + row.Url + '" title="查看审批流程" target="_blank">';
+    }
+
+    function dbs_order_detail(e, value, row, index) {
+        console.log("row " + row);
+
+        if (row.Status == "init") {
+            showMessage("请选中行并点击<b>流程申请</b>按钮");
+            return
+        }
+    }
+
+    function flow_search() {
+        /*var group = $("#flow_group_combobox").val();
+        if (group == "") {
+            showMessage("分组名不能为空");
+            return
+        }*/
+
+        $("#flow_table").bootstrapTable('refreshOptions', {url: '/flow/list'})
+    }
+    
+    function flow_auth_grant() {
+        // 申请dump 授权
+        var datas = $("#flow_table").bootstrapTable('getSelections');
+        if (datas.length == 0) {
+            showMessage("没有需要申请的数据库记录 请到<b>实例管理页面</b>添加数据库实例");
+            return
+        }
+
+        // 过滤需要的行
+        var selectRows = new Array();
+        for (var i = 0; i < datas.length; i++) {
+            if (datas[i].Status == "unauthorized") { // 只选中未授权的节点
+                selectRows.push(datas[i]);
+            }
+        }
+
+        if (selectRows.length == 0) {
+            showMessage("没有选中的行或者选中的数据库<b>已经审批</b>");
+            return
+        }
+
+        var group = $("#flow_group_combobox").val();
+
+        // 先检查权限
+        $.ajax({
+            type: "POST",
+            url: "/group/check",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                "group": group
+            }), // 转换成json
+            success: function (rst, status) {
+                if (rst.code == 1000) { // 只有分组管理员才有权限操作
+                    $.ajax({
+                        type: "POST",
+                        url: "/flow/auth/grant",
+                        dataType: "json",
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify(selectRows), // 空串
+                        success: function (rst, status) {
+                            if (rst.code == 1000) {
+                                // 返回成功
+                                showMessage("请求授权<b>成功</b>!!!");
+                            } else {
+                                // 显示错误信息
+                                showMessage(rst.message);
+                            }
+
+                            // 刷新表单
+                            $("#flow_table").bootstrapTable('refreshOptions', {url: '/flow/list'});
+                        }
+                    });
+                } else {
+                    // 普通用户 无权限 直接返回
+                    showMessage(rst.message);
+                }
+            }
+        });
+    }
+
+    function flow_auth_process() {
+        // 申请数据库系统授权
+        var datas = $("#flow_table").bootstrapTable('getSelections');
+        if (datas.length == 0) {
+            showMessage("没有需要申请的数据库记录 请到<b>实例管理页面</b>添加数据库实例");
+            return
+        }
+
+        // 过滤需要的行
+        var selectRows = new Array();
+        for (var i = 0; i < datas.length; i++) {
+            if (datas[i].Status == "init" || datas[i].Status == "oppose") { // 初始化状态后者 驳回状态
+                selectRows.push(datas[i]);
+            }
+        }
+
+        if (selectRows.length == 0) {
+            showMessage("没有选中的行或者选中的数据库<b>已经审批</b>");
+            return
+        }
+
+        var group = $("#flow_group_combobox").val();
+
+        // 先检查权限
+        $.ajax({
+            type: "POST",
+            url: "/group/check",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                "group": group
+            }), // 转换成json
+            success: function (rst, status) {
+                if (rst.code == 1000) { // 只有分组管理员才有权限操作
+                    $.ajax({
+                        type: "POST",
+                        url: "/flow/auth/process",
+                        dataType: "json",
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify(selectRows), // 空串
+                        success: function (rst, status) {
+                            if (rst.code == 1000) {
+                                // 返回成功
+                                showMessage("请求授权<b>成功</b>!!!");
+                            } else {
+                                // 显示错误信息
+                                showMessage(rst.message);
+                            }
+
+                            // 刷新表单
+                            $("#flow_table").bootstrapTable('refreshOptions', {url: '/flow/list'});
+                        }
+                    });
+                } else {
+                    // 普通用户 无权限 直接返回
+                    showMessage(rst.message);
+                }
+            }
+        });
+    }
+
+    function flow_start_dump() {
+        // 启动 binlog dump
+        var datas = $("#flow_table").bootstrapTable('getData');
+        if (datas.length == 0) {
+            showMessage("没有需要开启dump的数据库记录 请到<b>实例管理页面</b>添加数据库实例");
+            return
+        }
+
+        // 获取已经选中行
+        var selectRows = new Array();
+        for (var i = 0; i < datas.length; i++) {
+            if (datas[i].state) { // 初始化状态后者 驳回状态
+                if (datas[i].State == "init" || datas[i].Status == "oppose") {
+                    showMessage("存在没有审批通过的<b>数据库实例</b>!!");
+                    return
+                }
+
+                if (datas[i].Status == "agree" || datas[i].Status == "dump") {
+                    selectRows.push(datas[i]);
+                }
+            }
+        }
+
+        if (selectRows.length == 0) {
+            showMessage("没有选中的行或者选中的数据库<b>已经在dump或者审批未通过</b>");
+            return
+        }
+
+        var group = $("#flow_group_combobox").val();
+
+        // 先检查权限
+        $.ajax({
+            type: "POST",
+            url: "/group/check",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                "group": group
+            }), // 转换成json
+            success: function (rst, status) {
+                if (rst.code == 1000) { // 只有分组管理员才有权限提交 开始dump数据
+                    $.ajax({
+                        type: "POST",
+                        url: "/flow/start/dump",
+                        dataType: "json",
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify(selectRows), //
+                        success: function (rst, status) {
+                            if (rst.code == 1000) {
+                                // 返回成功
+                                showMessage("开启Binlog Dump<b>成功</b>!!!");
+                            } else {
+                                // 显示错误信息
+                                showMessage(rst.message);
+                            }
+
+                            // 刷新表单
+                            $("#flow_table").bootstrapTable('refreshOptions', {url: '/flow/list'});
+                        }
+                    });
+                } else {
+                    // 普通用户 无权限 直接返回
+                    showMessage(rst.message);
+                }
+            }
+        });
+    }
+</script>
+</body>
+{{end}}

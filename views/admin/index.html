@@ -1,0 +1,699 @@
+{{template "base/base.html" .}}
+{{define "head"}}
+<title>{{.appname}}</title>
+
+{{end}}
+{{define "body"}}
+<body class="hold-transition skin-blue sidebar-mini">
+<div id="wrapper">
+    {{template "base/navbar.html" .}}
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+       <!--  <section class="content-header">
+           <h1>
+               操作管理
+           </h1>
+           <ol class="breadcrumb">
+               <li><a href="/index"><i class="fa fa-dashboard"></i>主页</a></li>
+               <li class="active">操作管理</li>
+           </ol>
+       </section>
+        -->
+        <div>
+            <ol class="breadcrumb">
+                <li><a href="/index">首页</a></li>
+                <li class="active">操作管理</li>
+            </ol>
+        </div>
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>查询条件</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <form class="form-inline">
+                     <div class="form-group">
+                        <div class="input-group">
+                            <select class="combobox form-control" id="admin_group_combobox">
+                                <option value="">请选择</option>
+                                {{range $index, $elem := .adminGroups}}
+                                <option value="{{$elem.Name}}">{{$elem.Name}}</option>
+                                {{end}}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                             <input type="text" class="host form-control" name="host" placeholder="输入MySQL host">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-search" type="button" onclick="admin_search()">查询</button>
+                </form>
+            </div>
+        </div>
+        <!-- Main content -->
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>查询结果</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                </div>
+            </div>
+            {{template "admin/set_leader.html" . }}
+            {{template "admin/set_candidates.html" . }}
+            {{template "admin/set_binlog.html" . }}
+            {{template "monitor/detail.html"}}
+
+            <!-- <div class="control-group">
+                <div class="row">
+                    <div class="col-md-7">
+                        <button type="button" class="btn btn-success glyphicon glyphicon-pause"
+                                onclick="admin_offline()">停止
+                        </button>
+                        <button type="button" class="btn btn-success glyphicon glyphicon-play"
+                                onclick="admin_online()">启动
+                        </button>
+                        <button type="button" class="btn btn-success glyphicon glyphicon-refresh"
+                                onclick="admin_reset_counter()">重置计数
+                        </button>
+                        <button type="button" class="btn btn-success glyphicon glyphicon-fast-forward"
+                                onclick="admin_choose_binlog()">重新定位
+                        </button>
+                        <button type="button" class="btn btn-success glyphicon glyphicon-transfer"
+                                onclick="admin_choose_leader()">迁移leader
+                        </button>
+                        <button type="button" class="btn btn-success glyphicon glyphicon-transfer"
+                                onclick="admin_choose_candidates()">设置候选
+                        </button>
+                    </div>
+                    <div class="col-md-5" align="right">
+                        <select class="combobox" id="admin_group_combobox">
+                            <option value="">请选择</option>
+                            {{range $index, $elem := .adminGroups}}
+                            <option value="{{$elem.Name}}">{{$elem.Name}}</option>
+                            {{end}}
+                        </select>
+                        <input type="text" class="host" name="host" placeholder="输入MySQL host">
+                        <button type="button" class="btn btn-success glyphicon glyphicon-search"
+                                onclick="admin_search()">搜索
+                        </button>
+                    </div>
+                </div>
+            </div> -->
+            <div class="ibox-content">
+                <div  class="bt-position">
+                    <a class="btn btn-success btn-add-project" onclick="admin_offline()">停止</a>
+                    <a class="btn btn-success btn-add-project" onclick="admin_online()">启动</a>
+                    <a class="btn btn-success btn-add-project" onclick="admin_reset_counter()">重置计数</a>
+                    <a class="btn btn-success btn-add-project" onclick="admin_choose_binlog()">重新定位</a>
+                    <a class="btn btn-success btn-add-project" onclick="admin_choose_leader()">迁移leader</a>
+                    <a class="btn btn-success btn-add-project" onclick="admin_choose_candidates()">设置候选</a>
+                </div>
+                <table id="admin_table"
+                       data-toggle="table"
+                       data-method="post"
+                       data-url="/monitor/list"
+                       data-query-params="admin_post_paras"
+                       data-pagination="true"
+                       data-side-pagination="client"
+                       data-sort-order="desc"
+                       class="table-striped"
+                       data-page-list="[5, 10, 20, 50, 100, 200, 1000, 2000]"
+                       data-row-style="rowStyle"
+                       data-click-to-select="true"
+                       style="word-break:break-all; word-wrap:break-all;">
+                    <thead>
+                    <tr>
+                        <th data-field="state" data-checkbox="true">全选</th>
+                        <th data-field='Host' data-sortable="true">MySQL实例</th>
+                        <th data-field='Port' data-sortable="true">端口</th>
+                        <th data-field='Status' data-sortable="true">Dump状态</th>
+                        <th data-field='BinlogFile' data-sortable="true">BinlogFile</th>
+                        <th data-field='BinlogPos' data-sortable="true">BinlogPos</th>
+                        <th data-field='ExecutedGtidSet' data-sortable="true">ExecutedGtidSet</th>
+                        <th data-field='Leader' data-sortable="true">leader</th>
+                        <th data-field='RetryTimes' data-sortable="true">重试次数</th>
+                        <th data-field='CurrentTime' data-sortable="true">当前时间</th>
+                        <th data-field='Candidates' data-sortable="true">候选节点</th>
+                        <th data-formatter="detail_admin_formatter" data-events="detail_admin_action">详情</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+</div>
+
+<script>
+    // 秒钟正则表达式
+    var secReg = new RegExp("^([1-9]|[1-4]\\d|5[0-9])$");
+
+    // 点击事件
+    window.detail_admin_action = {
+        'click .edit': binlog_dump_detail,
+    };
+
+    // 查看binlog 详情 显示binlog 延迟情况对比
+    function binlog_dump_detail(e, value, row, index) {
+        // monitor_detail_modal
+        $.ajax({
+            type: "POST",
+            url: "/monitor/compare",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                "host": row.Host,
+                "port": row.Port,
+                "binlogFile": row.BinlogFile,
+                "binlogPos": row.BinlogPos,
+                "executedGtidSet": row.ExecutedGtidSet
+            }), // 转换成json
+            success: function (rst, status) {
+                if (rst.code == 1000) {
+                    init_detail_monitor_modal(rst.message);
+                    $("#monitor_detail_modal").modal('show');
+                } else {
+                    showMessage(rst.message);
+                }
+            },
+            error: function (req, data, error) {
+                console.log("error occur from server")
+            }
+        });
+    }
+
+    function detail_admin_formatter(value, row, index) {
+        return '<a class="edit glyphicon glyphicon-pencil" href="javascript:void(0)" title="详情">';
+    }
+
+    function copyRow(source) {
+        var nr = {}; // new row
+        for (var key in source) {
+            nr[key] = source[key];
+        }
+        return nr; // new row
+    }
+
+    admin_post_paras: function admin_post_paras() {
+        console.log("admin_post_paras");
+        return {"host": $(".host").val(), "group": $("#admin_group_combobox").val()};
+    }
+
+    function admin_search() {
+        console.log("admin_search");
+        /*var group = $("#admin_group_combobox").val();
+        if (group == "") {
+            showMessage("分组名不能为空!!");
+            return
+        }*/
+
+        // 刷新表单
+        $("#admin_table").bootstrapTable('refreshOptions', {url: "/monitor/list"});
+    }
+
+    function admin_online() {
+        // 申请数据库系统授权
+        var datas = $("#admin_table").bootstrapTable('getData');
+        if (datas.length == 0) {
+            showMessage("表中没有数据 请到<b>实例管理</b>当中添加记录");
+            return
+        }
+
+        var idx = new Array(); // 记录当前选中行下标
+
+        var selectRows = new Array(); // 获取选中行数据
+
+        for (var i = 0; i < datas.length; i++) {
+            if (datas[i].state && datas[i].Status.toLowerCase() == "offline") {// 选中行
+                selectRows.push(datas[i]);
+                idx.push(i);
+            }
+        }
+
+        if (selectRows.length == 0) {
+            showMessage("选中有效行数 <b>{Dump状态 = OFFLINE}</b>为 <b>零!!</b>");
+            return
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/admin/set/online",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(selectRows), // json 选中需要数据
+            success: function (rst, status) { // result 返回的也是数组 并且行号对齐
+                console.log(rst);
+                var loseHost = "";
+                var successHost = "";
+
+                for (var i = 0; i < idx.length; i++) {
+                    if (rst[i].code == 1000) {
+                        $('#admin_table').bootstrapTable('updateRow', {index: idx[i], row: {Status: "ONLINE"}});
+                        successHost += (row.Host + ",")
+                    } else {
+                        loseHost += (row.Host + ",")
+                    }
+                }
+
+                if (loseHost == "") {
+                    showMessage("<b>更新状态成功</b>!!!");
+                    return
+                }
+
+                showMessage(successHost + " 操作 成功 \n\n" + loseHost + " 操作 失败\n\n");
+            }
+        });
+    }
+
+    function admin_offline() {
+        var datas = $("#admin_table").bootstrapTable('getData');
+        if (datas.length == 0) {
+            showMessage("表中没有数据 请到<b>实例管理</b>当中添加记录");
+            return
+        }
+
+        var idx = new Array(); // 记录当前选中行下标
+
+        var selectRows = new Array(); // 获取选中行数据
+
+        for (var i = 0; i < datas.length; i++) {
+            if (datas[i].state && datas[i].Status.toLowerCase() == "online") {// 选中行
+                selectRows.push(datas[i]);
+                idx.push(i);
+            }
+        }
+
+        if (selectRows.length == 0) {
+            showMessage("选中有效行数 <b>{Dump状态 = ONLINE}</b> 为<b>零</b>");
+            return
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/admin/set/offline",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(selectRows), // json 选中需要数据
+            success: function (rst, status) { // result 返回的也是数组 并且行号对齐
+                console.log(rst);
+                var loseHost = "";
+                var successHost = "";
+
+                for (var i = 0; i < idx.length; i++) {
+                    if (rst[i].code == 1000) {
+                        $('#admin_table').bootstrapTable('updateRow', {index: idx[i], row: {Status: "OFFLINE"}});
+                        successHost += (row.Host + ",")
+                    } else {
+                        loseHost += (row.Host + ",")
+                    }
+                }
+
+                if (loseHost == "") {
+                    showMessage("<b>更新状态成功</b>!!!");
+                    return
+                }
+
+                showMessage(successHost + " 操作 成功 \n\n" + loseHost + " 操作 失败\n\n");
+            }
+        });
+
+    }
+
+    function admin_reset_counter() {
+        var datas = $("#admin_table").bootstrapTable('getData');
+        if (datas.length == 0) {
+            showMessage("表中没有数据 请到<b>实例管理</b>当中添加记录");
+            return
+        }
+
+        var idx = new Array(); // 记录当前选中行下标
+
+        var selectRows = new Array(); // 获取选中行数据
+
+        for (var i = 0; i < datas.length; i++) {
+            if (datas[i].state
+                && datas[i].Status.toLowerCase() == "offline"
+                && datas[i].RetryTimes > "0") {// 选中行
+                selectRows.push(datas[i]);
+                idx.push(i);
+            }
+        }
+
+        if (selectRows.length == 0) {
+            showMessage("选中有效行数 <b>{Dump状态 = OFFLINE && RetryTimes > 0}</b> 为 <b>零!!</b>");
+            return
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/admin/reset/counter",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(selectRows), // json 选中需要数据
+            success: function (rst, status) { // result 返回的也是数组 并且行号对齐
+                console.log(rst);
+                var loseHost = "";
+                var successHost = "";
+
+                for (var i = 0; i < idx.length; i++) {
+                    if (rst[i].code == 1000) {
+                        $('#admin_table').bootstrapTable('updateRow', {index: idx[i], row: {RetryTimes: 0}});
+                        successHost += (row.Host + ",")
+                    } else {
+                        loseHost += (row.Host + ",")
+                    }
+                }
+
+                if (loseHost == "") {
+                    showMessage("<b>更新状态成功</b>!!!");
+                    return
+                }
+
+                showMessage(successHost + " 操作 成功 \n\n" + loseHost + " 操作 失败\n\n");
+            }
+        });
+
+    }
+
+    function admin_choose_binlog() {// 分组名称
+        var group = $("#admin_group_combobox").val();
+        if (group == "") {
+            showMessage("分组名称不能为<b>空</b>!!")
+            return
+        }
+        var selectRows = $("#admin_table").bootstrapTable('getSelections');
+        if (selectRows.length != 1) {
+            showMessage("只能选中某一行数据!!!");
+            return
+        }
+
+        if (selectRows[0].Status.toLowerCase() != "offline") {
+            showMessage("选中行状态必须是 <b>{Dump状态 =  OFFLINE}</b>");
+            return
+        }
+
+        init_set_binlog_modal(selectRows[0]);
+
+        $("#admin_set_binlog_modal").modal('show');
+    }
+
+    function admin_choose_leader() {
+        var selectRows = $("#admin_table").bootstrapTable('getSelections');
+        if (selectRows.length == 0) {
+            showMessage("请选择需要切换leader的行!!!");
+            return
+        }
+
+        for (var i = 0; i < selectRows.length; i++) {
+            if (selectRows[i].Status.toLowerCase() != "offline") {
+                showMessage("选中行状态必须是<b>{Dump状态 =  OFFLINE}</b>");
+                return
+            }
+        }
+
+        $("#admin_set_leader_modal").modal('show');
+    }
+
+    function admin_choose_candidates() {
+        // 分组名称
+        var group = $("#admin_group_combobox").val();
+        if (group == "") {
+            showMessage("分组名称不能为<b>空</b>!!")
+            return
+        }
+
+        // 申请数据库系统授权
+        var selectRows = $("#admin_table").bootstrapTable('getSelections');
+        if (selectRows.length == 0) {
+            showMessage("请选择行!!");
+            return
+        }
+
+        for (var i = 0; i < selectRows.length; i++) {
+            if (selectRows[i].Status.toLowerCase() != "offline") {
+                showMessage("选中行状态必须是 <b>{Dump状态 =  OFFLINE}</b>");
+                return
+            }
+        }
+
+        var cs = new Set();
+        var zk = "";
+        for (var i = 0; i < selectRows.length; i++) {
+            cs.add(selectRows[i].Zk);
+            zk = selectRows[i].Zk;
+        }
+
+        if (cs.size != 1) {
+            showMessage("当前选中的MySQL实例不属于一个集群!!");
+            return
+        }
+
+        // 初始化 set candidates modal
+        init_set_candidates_modal(zk);
+
+        $("#admin_set_candidates_modal").modal('show');
+    }
+
+    function admin_set_leader() {
+        var leader = $("#wave_hosts_combobox").val();
+        if (leader == "") {
+            showMessage("leader 不能为空！！");
+            return
+        }
+
+        // 分组名称
+        var group = $("#admin_group_combobox").val();
+        if (group == "") {
+            showMessage("分组名称不能为<b>空</b>!!")
+            return
+        }
+
+        // 获取表所有记录
+        var datas = $("#admin_table").bootstrapTable('getData');
+        if (datas.length == 0) {
+            showMessage("表中没有数据 请到<b>实例管理</b>当中添加记录");
+            return
+        }
+
+        var idx = new Array(); // 记录当前选中行下标
+
+        var selectRows = new Array(); // 获取选中行数据
+
+        for (var i = 0; i < datas.length; i++) {
+            if (datas[i].state && leader != datas[i].Leader) {// 选中行 并且leader 不相等
+                var row = copyRow(datas[i]);
+                row.Leader = leader;
+                selectRows.push(row);
+                idx.push(i);
+            }
+        }
+
+        if (selectRows.length == 0) {
+            showMessage("选中行的leader前后未变更, 請重新選擇!!")
+            return
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/admin/set/leader",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(selectRows),
+            success: function (rst, status) { // result 返回的也是数组 并且行号对齐
+                var loseHost = "";
+                var successHost = "";
+
+                for (var i = 0; i < idx.length; i++) {
+                    if (rst[i].code == 1000) {
+                        $('#admin_table').bootstrapTable('updateRow',
+                            {
+                                index: idx[i], row:
+                                {
+                                    Leader: leader
+                                }
+                            });
+                        successHost += (row.Host + ",")
+                    } else {
+                        loseHost += (row.Host + ",")
+                    }
+                }
+
+                $("#admin_set_leader_modal").modal('hide');
+
+                if (loseHost == "") {
+                    showMessage("<b>设置leader</b>!!!");
+                    return
+                }
+
+                showMessage(successHost + " 设置leader 成功 \n\n" + loseHost + " 设置leader 失败\n\n");
+
+            }
+        });
+    }
+
+    function admin_set_candidate() {
+        // candidate wave hosts
+        var candidates = $("#set_candidate_hosts").val();
+        if (candidates == null || candidates == "" || candidates.length != 3) {
+            showMessage("候选节点 不能为空 且必须有3个！！");
+            return
+        }
+
+        // 获取 admin table 当中选中记录的行 目的 设置candidate
+        var datas = $("#admin_table").bootstrapTable('getData');
+        if (datas.length == 0) {
+            showMessage("表中没有数据 请到<b>实例管理</b>当中添加记录");
+            return
+        }
+
+        var idx = new Array(); // 记录当前选中行下标
+        var selectRows = new Array(); // 获取选中行数据
+
+        // 候选节点
+        var cans = candidates.sort().join(',');
+
+        for (var i = 0; i < datas.length; i++) {
+            var oldCans = datas[i].Candidates.split(',');
+            if (datas[i].state &&
+                cans != oldCans.sort().toString()) {// 选中行
+                var row = copyRow(datas[i]);
+                row.Candidates = cans;
+                selectRows.push(row);
+                idx.push(i);
+            }
+        }
+
+        if (selectRows.length == 0) {
+            showMessage("选中行的候选节点前后未变更, 请重新选择!!");
+            return
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/admin/set/candidate",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(selectRows), // 空串
+            success: function (rst, status) { // result 返回的也是数组 并且行号对齐
+                var loseHost = "";
+                var successHost = "";
+                for (var i = 0; i < idx.length; i++) {
+                    if (rst[i].code == 1000) { // 每个ip 对应一个节点
+                        $('#admin_table').bootstrapTable('updateRow',
+                            {
+                                index: idx[i], row:
+                                {
+                                    Candidates: cans
+                                }
+                            });
+                        successHost += (selectRows[idx[i].Host] + ",");
+                    } else {
+                        loseHost += (selectRows[idx[i]].Host + ",")
+                    }
+                }
+
+                // 隐藏 candidates modal
+                $("#admin_set_candidates_modal").modal('hide');
+
+                if (loseHost == "") {
+                    showMessage("操作成功");
+                    return
+                }
+
+                showMessage(successHost + " 设置备选节点成功\n\n" + loseHost + " 设置备选节点失败\n");
+            }
+        });
+    }
+
+    // 设置binlog 位置
+    function admin_set_binlog() {
+        var instance = $("#set_binlog_host_combobox").val();
+        var binlogFile = $("#set_binlog_file_combobox").val();
+        var binlogPos = $(".set_binlog_position").val().trim();
+        var executedGtidSet = $(".set_dump_executed_gtid_set").val().trim();
+
+        if (binlogFile == "" || binlogPos == "" || instance == "") {
+            showMessage("参数不能为空!!!");
+            return
+        }
+        var host = instance.split(":")[0];
+        var port = instance.split(":")[1];
+
+        // 必须要选择一个
+        var selectRow = $("#admin_table").bootstrapTable('getSelections')[0];
+        if (binlogFile == selectRow.BinlogFile &&
+            binlogPos == selectRow.BinlogPos &&
+            executedGtidSet == selectRow.ExecutedGtidSet) {
+            showMessage("binlog 文件 以及 binlog 位置 以及 gtid 位置前后不变, 请重新设置!!");
+            return
+        }
+
+        var newRow = copyRow(selectRow);
+        newRow.BinlogFile = binlogFile;
+        newRow.BinlogPos = binlogPos;
+        newRow.ExecutedGtidSet = executedGtidSet;
+
+        $.ajax({
+            type: "POST",
+            url: "/admin/set/binlog",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(newRow), // 选中行
+            success: function (rst, status) { // result 返回的也是数组 并且行号对齐
+                if (rst.code == 1000) {
+                    showMessage("<b>设置binlog 位置成功</b>!!!");
+                    $("#admin_set_binlog_modal").modal('hide');
+                    selectRow.BinlogFile = binlogFile;
+                    selectRow.BinlogPos = binlogPos;
+                    selectRow.ExecutedGtidSet = executedGtidSet;
+                    return
+                }
+                showMessage(rst.message);
+            }
+        });
+    }
+
+    // 初始化 set candidates modal
+    function init_set_candidates_modal(zk) {
+        $('#set_candidate_hosts').select2({
+            tags: true
+        });
+
+        // edit_mq_filter_ids
+        $.ajax({
+            type: "POST",
+            url: "/admin/candidate/list",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({"zk": zk}), // 传入集群信息
+            success: function (rst, status) { // 按照负载压力 升序
+                console.log(rst);
+                var ids = new Array();
+                $.each(rst, function (i, v) {
+                    ids.push({
+                        id: v.Ip,
+                        text: v.Ip,
+                    });
+                });
+
+                $('#set_candidate_hosts').select2({
+                    data: ids
+                });
+            }
+        });
+    }
+
+</script>
+</body>
+{{end}}

@@ -1,0 +1,108 @@
+[35m[1m______
+| ___ \
+| |_/ /  ___   ___
+| ___ \ / _ \ / _ \
+| |_/ /|  __/|  __/
+\____/  \___| \___| v1.8.0
+[21m[0m2017/04/10 09:17:10 [34m[1mINFO    [21m[0m ▶ 0001 Using 'tower_v2' as 'appname'
+2017/04/10 09:17:10 [34m[1mINFO    [21m[0m ▶ 0002 Loading default configuration...
+2017/04/10 09:17:10 [34m[1mINFO    [21m[0m ▶ 0003 Initializing watcher...
+2017/04/10 09:17:10 [34m[1mINFO    [21m[0m ▶ 0004 [1mWatching: [21m/home/leeyd/projects/golang/src/github.com/binlake/tower_v2/controllers
+2017/04/10 09:17:10 [34m[1mINFO    [21m[0m ▶ 0005 [1mWatching: [21m/home/leeyd/projects/golang/src/github.com/binlake/tower_v2/filters
+2017/04/10 09:17:10 [34m[1mINFO    [21m[0m ▶ 0006 [1mWatching: [21m/home/leeyd/projects/golang/src/github.com/binlake/tower_v2
+2017/04/10 09:17:10 [34m[1mINFO    [21m[0m ▶ 0007 [1mWatching: [21m/home/leeyd/projects/golang/src/github.com/binlake/tower_v2/models
+2017/04/10 09:17:10 [34m[1mINFO    [21m[0m ▶ 0008 [1mWatching: [21m/home/leeyd/projects/golang/src/github.com/binlake/tower_v2/routers
+2017/04/10 09:17:11 [32m[1mSUCCESS [21m[0m ▶ 0009 Built Successfully!
+2017/04/10 09:17:11 [34m[1mINFO    [21m[0m ▶ 0010 Restarting 'tower_v2'...
+2017/04/10 09:17:11 [32m[1mSUCCESS [21m[0m ▶ 0011 './tower_v2' is running...
+2017/04/10 09:17:11 main.go:20: [0;37m[info][1]dataSource:root:secret@tcp(127.0.0.1:3306)/towerv2?charset=utf8[0m
+2017/04/10 09:17:11 [1;34m[I] [asm_amd64.s:2197] http server Running on http://:8081[0m
+2017/04/10 09:17:17 login.go:82: [0;37m[info][LoginFilter]&{0xc42010c2d0 0xc4204ae600 0xc42047a600 0xc4204ae620 } login success:{1 {0 0 123@163.com 12345678 3765 00035029 00010200 运维研发组 李亚迪 41868 bjliyadi} true }[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|   97.74992ms|   match|[44m GET     [0m /topic/index   r:/topic/index[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|    424.006µs|   match|[44m GET     [0m /static/plugins/bootstrap/css/bootstrap.min.css[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|    284.841µs|   match|[44m GET     [0m /static/plugins/AdminLTE/css/AdminLTE.min.css[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|    127.601µs|   match|[44m GET     [0m /static/plugins/jvectormap/jquery-jvectormap-1.2.2.css[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|    284.329µs|   match|[44m GET     [0m /static/plugins/AdminLTE/css/skins/_all-skins.min.css[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|    960.359µs|   match|[44m GET     [0m /static/plugins/iCheck/flat/blue.css[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|   1.102372ms|   match|[44m GET     [0m /static/plugins/morris/morris.css[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|    128.103µs|   match|[44m GET     [0m /static/plugins/daterangepicker/daterangepicker.css[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|     71.232µs|   match|[44m GET     [0m /static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|    162.156µs|   match|[44m GET     [0m /static/plugins/datepicker/datepicker3.css[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|    120.782µs|   match|[44m GET     [0m /static/css/bootstrap-table.min.css[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|     72.221µs|   match|[44m GET     [0m /static/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|    187.039µs|   match|[44m GET     [0m /static/plugins/jQuery/jquery-2.2.3.min.js[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|    124.663µs|   match|[44m GET     [0m /static/plugins/bootstrap/js/bootstrap.min.js[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|    179.987µs|   match|[44m GET     [0m /static/plugins/morris/morris.min.js[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|    121.526µs|   match|[44m GET     [0m /static/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|    278.052µs|   match|[44m GET     [0m /static/plugins/sparkline/jquery.sparkline.min.js[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|    318.273µs|   match|[44m GET     [0m /static/plugins/jvectormap/jquery-jvectormap-world-mill-en.js[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|     480.14µs|   match|[44m GET     [0m /static/plugins/knob/jquery.knob.js[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|     170.56µs|   match|[44m GET     [0m /static/plugins/daterangepicker/daterangepicker.js[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|    116.928µs|   match|[44m GET     [0m /static/plugins/datepicker/bootstrap-datepicker.js[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|    362.395µs|   match|[44m GET     [0m /static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|     88.779µs|   match|[44m GET     [0m /static/plugins/slimScroll/jquery.slimscroll.min.js[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|    129.422µs|   match|[44m GET     [0m /static/plugins/fastclick/fastclick.js[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|    103.616µs|   match|[44m GET     [0m /static/plugins/AdminLTE/js/app.min.js[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|    126.895µs|   match|[44m GET     [0m /static/js/bootstrap-table.min.js[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|     51.705µs|   match|[44m GET     [0m /static/js/bootstrap-table-zh-CN.min.js[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|     53.695µs|   match|[44m GET     [0m /static/js/common.js[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|    181.296µs|   match|[44m GET     [0m /static/plugins/bootstrap-multiselect/js/bootstrap-multiselect.js[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|    158.683µs|   match|[44m GET     [0m /static/plugins/AdminLTE/img/logo2.png[0m
+2017/04/10 09:17:17 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|    112.688µs|   match|[44m GET     [0m /static/plugins/AdminLTE/img/user.jpg[0m
+2017/04/10 09:17:18 login.go:82: [0;37m[info][LoginFilter]&{0xc42010cab0 0xc4204afa20 0xc42047ad00 0xc4204afa40 } login success:{1 {0 0 123@163.com 12345678 3765 00035029 00010200 运维研发组 李亚迪 41868 bjliyadi} true }[0m
+[ORM]2017/04/10 09:17:18  -[Queries/default] - [  OK /    db.Query /     0.4ms] - [SELECT T0.`id`, T0.`topic_pid_id`, T0.`db_filter`, T0.`column_filter`, T0.`type`, T0.`event_type`, T1.`id`, T1.`userid`, T1.`uid`, T1.`name`, T1.`createtime`, T1.`updatetime`, T1.`with_transaction`, T1.`topic_type` FROM `topic_detail` T0 INNER JOIN `topic` T1 ON T1.`id` = T0.`topic_pid_id` LIMIT 1110]
+2017/04/10 09:17:18 topic.go:90: [0;36m[debug][List]query:map[userid:bjliyadi] fields:[] sort:[] order:[] offset:0 limit:10[0m
+[ORM]2017/04/10 09:17:18  -[Queries/default] - [  OK /    db.Query /     0.2ms] - [SELECT T0.`id`, T0.`userid`, T0.`uid`, T0.`name`, T0.`createtime`, T0.`updatetime`, T0.`with_transaction`, T0.`topic_type` FROM `topic` T0 WHERE T0.`userid` = ? LIMIT 10] - `bjliyadi`
+2017/04/10 09:17:18 topic.go:98: [0;36m[debug][List]data:{4 [{1 bjliyadi bjliyadi1491544830 test001 2017-04-07 14:00:30 2017-04-07 16:06:56 true 0} {2 bjliyadi bjliyadi1491552524 test002 2017-04-07 16:08:44 2017-04-07 16:08:44 true 0} {3 bjliyadi bjliyadi1491552601 test003 2017-04-07 16:10:01 2017-04-07 16:10:01 true 0} {4 bjliyadi bjliyadi1491785872 test004 2017-04-10 08:57:52 2017-04-10 08:58:03 true 0}]}[0m
+2017/04/10 09:17:18 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|  29.032988ms|   match|[44m GET     [0m /topic/list   r:/topic/list[0m
+2017/04/10 09:17:18 login.go:82: [0;37m[info][LoginFilter]&{0xc42033a090 0xc42015e080 0xc42047a200 0xc42015e0a0 } login success:{1 {0 0 123@163.com 12345678 3765 00035029 00010200 运维研发组 李亚迪 41868 bjliyadi} true }[0m
+[ORM]2017/04/10 09:17:18  -[Queries/default] - [  OK /    db.Query /     0.3ms] - [SELECT T0.`id`, T0.`topic_pid_id`, T0.`db_filter`, T0.`column_filter`, T0.`type`, T0.`event_type`, T1.`id`, T1.`userid`, T1.`uid`, T1.`name`, T1.`createtime`, T1.`updatetime`, T1.`with_transaction`, T1.`topic_type` FROM `topic_detail` T0 INNER JOIN `topic` T1 ON T1.`id` = T0.`topic_pid_id` LIMIT 1110]
+2017/04/10 09:17:18 topic.go:90: [0;36m[debug][List]query:map[userid:bjliyadi] fields:[] sort:[] order:[] offset:0 limit:10[0m
+[ORM]2017/04/10 09:17:18  -[Queries/default] - [  OK /    db.Query /     0.2ms] - [SELECT T0.`id`, T0.`userid`, T0.`uid`, T0.`name`, T0.`createtime`, T0.`updatetime`, T0.`with_transaction`, T0.`topic_type` FROM `topic` T0 WHERE T0.`userid` = ? LIMIT 10] - `bjliyadi`
+2017/04/10 09:17:18 topic.go:98: [0;36m[debug][List]data:{4 [{1 bjliyadi bjliyadi1491544830 test001 2017-04-07 14:00:30 2017-04-07 16:06:56 true 0} {2 bjliyadi bjliyadi1491552524 test002 2017-04-07 16:08:44 2017-04-07 16:08:44 true 0} {3 bjliyadi bjliyadi1491552601 test003 2017-04-07 16:10:01 2017-04-07 16:10:01 true 0} {4 bjliyadi bjliyadi1491785872 test004 2017-04-10 08:57:52 2017-04-10 08:58:03 true 0}]}[0m
+2017/04/10 09:17:18 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|  31.870259ms|   match|[44m GET     [0m /topic/list   r:/topic/list[0m
+2017/04/10 09:17:18 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|    123.941µs|   match|[44m GET     [0m /static/plugins/bootstrap/fonts/glyphicons-halflings-regular.woff2[0m
+2017/04/10 09:17:18 login.go:82: [0;37m[info][LoginFilter]&{0xc42033a090 0xc42015e080 0xc42047a700 0xc42015e0a0 } login success:{1 {0 0 123@163.com 12345678 3765 00035029 00010200 运维研发组 李亚迪 41868 bjliyadi} true }[0m
+2017/04/10 09:17:18 [1;34m[D] [server.go:2568] |      127.0.0.1|[43m 404 [0m|   16.76122ms| nomatch|[44m GET     [0m /favicon.ico[0m
+2017/04/10 14:14:25 login.go:82: [0;37m[info][LoginFilter]&{0xc42010c240 0xc420090260 0xc42000a600 0xc420090280 } login success:{1 {0 0 123@163.com 12345678 3765 00035029 00010200 运维研发组 李亚迪 41868 bjliyadi} true }[0m
+2017/04/10 14:14:25 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|  32.393711ms|   match|[44m GET     [0m /     r:/[0m
+2017/04/10 14:14:25 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|    575.898µs|   match|[44m GET     [0m /static/images/binlake.png[0m
+2017/04/10 14:14:26 login.go:82: [0;37m[info][LoginFilter]&{0xc42010c480 0xc4200de900 0xc42047af00 0xc4200de940 } login success:{1 {0 0 123@163.com 12345678 3765 00035029 00010200 运维研发组 李亚迪 41868 bjliyadi} true }[0m
+2017/04/10 14:14:26 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|  17.633213ms|   match|[44m GET     [0m /app/index   r:/app/index[0m
+2017/04/10 14:14:27 login.go:82: [0;37m[info][LoginFilter]&{0xc42010c240 0xc420090260 0xc4202bc100 0xc420090280 } login success:{1 {0 0 123@163.com 12345678 3765 00035029 00010200 运维研发组 李亚迪 41868 bjliyadi} true }[0m
+[ORM]2017/04/10 14:14:27  -[Queries/default] - [  OK /    db.Query /     0.2ms] - [SELECT T0.`id`, T0.`name`, T0.`domainlist`, T0.`status`, T0.`desc`, T0.`username`, T0.`createtime`, T0.`updatetime` FROM `app` T0 WHERE T0.`username` = ? LIMIT 10] - `bjliyadi`
+2017/04/10 14:14:27 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|  17.304948ms|   match|[44m GET     [0m /app/list   r:/app/list[0m
+2017/04/10 14:14:27 login.go:82: [0;37m[info][LoginFilter]&{0xc42010c240 0xc420090260 0xc4202bc200 0xc420090280 } login success:{1 {0 0 123@163.com 12345678 3765 00035029 00010200 运维研发组 李亚迪 41868 bjliyadi} true }[0m
+[ORM]2017/04/10 14:14:27  -[Queries/default] - [  OK /    db.Query /     0.4ms] - [SELECT T0.`id`, T0.`name`, T0.`domainlist`, T0.`status`, T0.`desc`, T0.`username`, T0.`createtime`, T0.`updatetime` FROM `app` T0 WHERE T0.`username` = ? LIMIT 10] - `bjliyadi`
+2017/04/10 14:14:27 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|  28.307076ms|   match|[44m GET     [0m /app/list   r:/app/list[0m
+2017/04/10 14:14:27 login.go:82: [0;37m[info][LoginFilter]&{0xc42057c1b0 0xc4201f0380 0xc42000b300 0xc4201f03c0 } login success:{1 {0 0 123@163.com 12345678 3765 00035029 00010200 运维研发组 李亚迪 41868 bjliyadi} true }[0m
+[ORM]2017/04/10 14:14:27  -[Queries/default] - [  OK /    db.Query /     0.3ms] - [SELECT T0.`id`, T0.`topic_pid_id`, T0.`db_filter`, T0.`column_filter`, T0.`type`, T0.`event_type`, T1.`id`, T1.`userid`, T1.`uid`, T1.`name`, T1.`createtime`, T1.`updatetime`, T1.`with_transaction`, T1.`topic_type` FROM `topic_detail` T0 INNER JOIN `topic` T1 ON T1.`id` = T0.`topic_pid_id` LIMIT 1110]
+2017/04/10 14:14:27 topic.go:90: [0;36m[debug][List]query:map[userid:bjliyadi] fields:[] sort:[] order:[] offset:0 limit:10[0m
+[ORM]2017/04/10 14:14:27  -[Queries/default] - [  OK /    db.Query /     0.7ms] - [SELECT T0.`id`, T0.`userid`, T0.`uid`, T0.`name`, T0.`createtime`, T0.`updatetime`, T0.`with_transaction`, T0.`topic_type` FROM `topic` T0 WHERE T0.`userid` = ? LIMIT 10] - `bjliyadi`
+2017/04/10 14:14:27 topic.go:98: [0;36m[debug][List]data:{4 [{1 bjliyadi bjliyadi1491544830 test001 2017-04-07 14:00:30 2017-04-07 16:06:56 true 0} {2 bjliyadi bjliyadi1491552524 test002 2017-04-07 16:08:44 2017-04-07 16:08:44 true 0} {3 bjliyadi bjliyadi1491552601 test003 2017-04-07 16:10:01 2017-04-07 16:10:01 true 0} {4 bjliyadi bjliyadi1491785872 test004 2017-04-10 08:57:52 2017-04-10 08:58:03 true 0}]}[0m
+2017/04/10 14:14:27 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|   42.32445ms|   match|[44m GET     [0m /topic/list   r:/topic/list[0m
+2017/04/10 14:15:31 login.go:82: [0;37m[info][LoginFilter]&{0xc42057c000 0xc420208180 0xc4202f0600 0xc4202081a0 } login success:{1 {0 0 123@163.com 12345678 3765 00035029 00010200 运维研发组 李亚迪 41868 bjliyadi} true }[0m
+[ORM]2017/04/10 14:15:31  -[Queries/default] - [  OK / db.QueryRow /     0.5ms] - [SELECT `id`, `name`, `domainlist`, `status`, `desc`, `username`, `createtime`, `updatetime` FROM `app` WHERE `id` = ? ] - `1`
+[ORM]2017/04/10 14:15:31  -[Queries/default] - [  OK /    db.Query /     0.3ms] - [SELECT topicid FROM apptopicrelation WHERE appid=?] - `1`
+mysql row affected nums:  4
+[ORM]2017/04/10 14:15:31  -[Queries/default] - [  OK /    db.Query /     0.5ms] - [SELECT T0.`id`, T0.`topic_pid_id`, T0.`db_filter`, T0.`column_filter`, T0.`type`, T0.`event_type`, T1.`id`, T1.`userid`, T1.`uid`, T1.`name`, T1.`createtime`, T1.`updatetime`, T1.`with_transaction`, T1.`topic_type` FROM `topic_detail` T0 INNER JOIN `topic` T1 ON T1.`id` = T0.`topic_pid_id` WHERE T0.`topic_pid_id` IN (?, ?, ?, ?) LIMIT 1000] - `1`, `2`, `3`, `4`
+Number of records updated in database: 7
+2017/04/10 14:15:31 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|  22.432166ms|   match|[46m POST    [0m /app/instanceDetail   r:/app/instanceDetail[0m
+2017/04/10 14:18:45 login.go:82: [0;37m[info][LoginFilter]&{0xc42010c240 0xc420208080 0xc42006e400 0xc4202080a0 } login success:{1 {0 0 123@163.com 12345678 3765 00035029 00010200 运维研发组 李亚迪 41868 bjliyadi} true }[0m
+2017/04/10 14:18:45 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|  36.133744ms|   match|[44m GET     [0m /app/index   r:/app/index[0m
+2017/04/10 14:18:45 login.go:82: [0;37m[info][LoginFilter]&{0xc42010c240 0xc420208080 0xc42000bc00 0xc4202080a0 } login success:{1 {0 0 123@163.com 12345678 3765 00035029 00010200 运维研发组 李亚迪 41868 bjliyadi} true }[0m
+[ORM]2017/04/10 14:18:45  -[Queries/default] - [  OK /    db.Query /     0.3ms] - [SELECT T0.`id`, T0.`name`, T0.`domainlist`, T0.`status`, T0.`desc`, T0.`username`, T0.`createtime`, T0.`updatetime` FROM `app` T0 WHERE T0.`username` = ? LIMIT 10] - `bjliyadi`
+2017/04/10 14:18:45 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|  22.797388ms|   match|[44m GET     [0m /app/list   r:/app/list[0m
+2017/04/10 14:18:45 login.go:82: [0;37m[info][LoginFilter]&{0xc42057c090 0xc420208980 0xc42000be00 0xc4202089a0 } login success:{1 {0 0 123@163.com 12345678 3765 00035029 00010200 运维研发组 李亚迪 41868 bjliyadi} true }[0m
+[ORM]2017/04/10 14:18:45  -[Queries/default] - [  OK /    db.Query /     0.3ms] - [SELECT T0.`id`, T0.`name`, T0.`domainlist`, T0.`status`, T0.`desc`, T0.`username`, T0.`createtime`, T0.`updatetime` FROM `app` T0 WHERE T0.`username` = ? LIMIT 10] - `bjliyadi`
+2017/04/10 14:18:45 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|  24.749353ms|   match|[44m GET     [0m /app/list   r:/app/list[0m
+2017/04/10 14:18:45 login.go:82: [0;37m[info][LoginFilter]&{0xc42010c240 0xc420208080 0xc42047b100 0xc4202080a0 } login success:{1 {0 0 123@163.com 12345678 3765 00035029 00010200 运维研发组 李亚迪 41868 bjliyadi} true }[0m
+[ORM]2017/04/10 14:18:45  -[Queries/default] - [  OK /    db.Query /     0.3ms] - [SELECT T0.`id`, T0.`topic_pid_id`, T0.`db_filter`, T0.`column_filter`, T0.`type`, T0.`event_type`, T1.`id`, T1.`userid`, T1.`uid`, T1.`name`, T1.`createtime`, T1.`updatetime`, T1.`with_transaction`, T1.`topic_type` FROM `topic_detail` T0 INNER JOIN `topic` T1 ON T1.`id` = T0.`topic_pid_id` LIMIT 1110]
+2017/04/10 14:18:45 topic.go:90: [0;36m[debug][List]query:map[userid:bjliyadi] fields:[] sort:[] order:[] offset:0 limit:10[0m
+[ORM]2017/04/10 14:18:45  -[Queries/default] - [  OK /    db.Query /     0.2ms] - [SELECT T0.`id`, T0.`userid`, T0.`uid`, T0.`name`, T0.`createtime`, T0.`updatetime`, T0.`with_transaction`, T0.`topic_type` FROM `topic` T0 WHERE T0.`userid` = ? LIMIT 10] - `bjliyadi`
+2017/04/10 14:18:45 topic.go:98: [0;36m[debug][List]data:{4 [{1 bjliyadi bjliyadi1491544830 test001 2017-04-07 14:00:30 2017-04-07 16:06:56 true 0} {2 bjliyadi bjliyadi1491552524 test002 2017-04-07 16:08:44 2017-04-07 16:08:44 true 0} {3 bjliyadi bjliyadi1491552601 test003 2017-04-07 16:10:01 2017-04-07 16:10:01 true 0} {4 bjliyadi bjliyadi1491785872 test004 2017-04-10 08:57:52 2017-04-10 08:58:03 true 0}]}[0m
+2017/04/10 14:18:45 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|  40.285145ms|   match|[44m GET     [0m /topic/list   r:/topic/list[0m
+2017/04/10 15:51:58 login.go:82: [0;37m[info][LoginFilter]&{0xc42010c240 0xc42000c4c0 0xc42006e400 0xc42000c500 } login success:{1 {0 0 123@163.com 12345678 3765 00035029 00010200 运维研发组 李亚迪 41868 bjliyadi} true }[0m
+2017/04/10 15:51:58 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m| 258.587688ms|   match|[44m GET     [0m /     r:/[0m
+2017/04/10 18:19:20 login.go:82: [0;37m[info][LoginFilter]&{0xc42010c240 0xc4200de400 0xc42000bc00 0xc4200de440 } login success:{1 {0 0 123@163.com 12345678 3765 00035029 00010200 运维研发组 李亚迪 41868 bjliyadi} true }[0m
+2017/04/10 18:19:20 [1;34m[D] [server.go:2568] |      127.0.0.1|[42m 200 [0m|    98.9403ms|   match|[44m GET     [0m /     r:/[0m

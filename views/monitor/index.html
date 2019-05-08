@@ -1,0 +1,181 @@
+{{template "base/base.html" .}}
+{{define "head"}}
+<title>{{.appname}}</title>
+
+{{end}}
+{{define "body"}}
+<body class="hold-transition skin-blue sidebar-mini">
+<div id="wrapper">
+    {{template "base/navbar.html" .}}
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+       <!--  <section class="content-header">
+           <h1>
+               监控管理
+           </h1>
+           <ol class="breadcrumb">
+               <li><a href="/index"><i class="fa fa-dashboard"></i>主页</a></li>
+               <li class="active">监控管理</li>
+           </ol>
+       </section> -->
+        <ol class="breadcrumb">
+            <li><a href="/group/index"></i>首页</a></li>
+            <li class="active">监控管理</li>
+        </ol>
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>查询条件</h5>
+            </div>
+            <div class="ibox-content">
+                <form class="form-inline">
+                     <div class="form-group">
+                        <div class="input-group">
+                            <select class="combobox form-control" id="monitor_group_combobox">
+                                <option value="">请选择</option>
+                                {{range $index, $elem := .UserGroups}}
+                                <option value="{{$elem.Name}}">{{$elem.Name}}</option>
+                                {{end}}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="text" name="host" placeholder="输入MySQL"  class="form-control host"/>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-search" type="button" onclick="monitor_search()">查询</button>
+                </form>
+            </div>
+        </div>
+        <!-- Main content -->
+        <div class="ibox">
+             <div class="ibox-title">
+                <h5>查询结果</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                    <a class="close-link">
+                        <i class="fa fa-times"></i>
+                    </a>
+                </div>
+            </div>
+            {{template "monitor/detail.html" . }}
+
+            <!-- <div class="control-group">
+                <select class="combobox" id="monitor_group_combobox">
+                    <option value="">请选择</option>
+                    {{range $index, $elem := .UserGroups}}
+                    <option value="{{$elem.Name}}">{{$elem.Name}}</option>
+                    {{end}}
+                </select>
+                <input type="text" class="host" name="host" placeholder="输入MySQL host">
+                <button type="button" class="btn btn-success glyphicon glyphicon-search" onclick="monitor_search()">搜索
+                </button>
+            </div> -->
+            <div class="ibox-content">
+                <table id="monitor_table"
+                       data-toggle="table"
+                       data-method="post"
+                       data-url="/monitor/list"
+                       data-query-params="monitor_post_paras"
+                       data-pagination="true"
+                       data-side-pagination="client"
+                       data-sort-order="desc"
+                       data-page-list="[5, 10, 20, 50, 100, 200, 1000, 2000]"
+                       class="table-striped"
+                       data-row-style="rowStyle"
+                       style="word-break:break-all; word-wrap:break-all;">
+                    <thead>
+                    <tr>
+                        <th data-formatter="detail_monitor_state_formatter">状态</th>
+                        <th data-field='Host' data-sortable="true">MySQL实例</th>
+                        <th data-field='Port' data-sortable="true">端口</th>
+                        <th data-field='Status' data-sortable="true">Dump状态</th>
+                        <th data-field='BinlogFile' data-sortable="true">BinlogFile</th>
+                        <th data-field='BinlogPos' data-sortable="true">BinlogPos</th>
+                        <th data-field='ExecutedGtidSet' data-sortable="true">ExecutedGtidSet</th>
+                        <th data-field='Leader' data-sortable="true">leader</th>
+                        <th data-field='RetryTimes' data-sortable="true">重试次数</th>
+                        <th data-field='CurrentTime' data-sortable="true">当前时间</th>
+                        <th data-field='Candidates' data-sortable="true">候选节点</th>
+                        <th data-formatter="detail_monitor_formatter" data-events="detail_monitor_action">详情</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+</div>
+
+<script>
+    monitor_post_paras: function monitor_post_paras() {
+        console.log("monitor_post_paras");
+        return {"host": $(".host").val(), "group": $("#monitor_group_combobox").val()};
+    }
+
+    // 点击事件
+    window.detail_monitor_action = {
+        'click .edit': binlog_dump_detail,
+    };
+
+    // 查看binlog 详情 显示binlog 延迟情况对比
+    function binlog_dump_detail(e, value, row, index) {
+        // monitor_detail_modal
+        $.ajax({
+            type: "POST",
+            url: "/monitor/compare",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                "host": row.Host,
+                "port": row.Port,
+                "binlogFile": row.BinlogFile,
+                "binlogPos": row.BinlogPos,
+                "executedGtidSet": row.ExecutedGtidSet
+            }), // 转换成json
+            success: function (rst, status) {
+                if (rst.code == 1000) {
+                    init_detail_monitor_modal(rst.message);
+                    $("#monitor_detail_modal").modal('show');
+                } else {
+                    showMessage(rst.message);
+                }
+            },
+            error: function (req, data, error) {
+                console.log("error occur from server")
+            }
+        });
+    }
+
+    function detail_monitor_formatter(value, row, index) {
+        return '<a class="edit glyphicon glyphicon-pencil" href="javascript:void(0)" title="详情">';
+    }
+
+    function detail_monitor_state_formatter(value, row, index) {
+        if (row.State) { // true 正常
+            return '<span style="color:#fff;width:50px;height: 35px;background: #008d4c;border-radius: 3px; padding: 5px 10px 5px 10px;">正常</span>';
+        } else { // false 异常
+            return '<span style="color:#fff;width:50px;height: 35px;background: #c30;border-radius: 3px; padding: 5px 10px 5px 10px;">异常</span>';
+        }
+    }
+
+    function monitor_search() {
+        console.log("monitor_search");
+        /*var group = $("#monitor_group_combobox").val();
+        if (group == "") {
+            showMessage("分组名不能为空!!");
+            return
+        }*/
+
+        // 刷新表单
+        $("#monitor_table").bootstrapTable('refreshOptions', {url: "/monitor/list"});
+    }
+</script>
+</body>
+{{end}}

@@ -1,0 +1,146 @@
+<div class="modal fade  bs-example-modal-lg" id="create_relation_modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title create_relation_modal_title">创建关联关系</h4>
+            </div>
+            <div class="modal-body" id="create_relation_modal_content">
+                <form class="form-horizontal" role="form">
+                   <!--  <div class="list-group-item list-group-item-success">
+                       <strong>注意</strong><br>
+                       <span>一个MySQL实例仅且属于一个分组</span><br>
+                       <strong>host</strong><br>
+                       <span>实例信息</span><br>
+                       <strong>消息格式</strong><br>
+                       <span>protobuf: 默认采用protobuf格式</span><br>
+                       <span>avro: avro 是大数据选择的格式</span><br>
+                       <strong>存储类型</strong><br>
+                       <span>MQ: 消息队列存储类型包括kafka/jmq</span><br>
+                       <span>KV: 目标存储为KV {类似redis/jimdb}</span><br>
+                       <strong>规则列表</strong><br>
+                       <span><b>规则管理</b>页面的规则列表</span><br>
+                   </div>
+                   <span aria-hidden="true" class="create_relation_rule_id">&times;</span>
+                   <br> -->
+                    <div class="form-group">
+                        <label class="form-label"><em>*</em>分组名称</label>
+                        <select class="combobox form-control" id="create_relation_group_combobox">
+                            <option value="">请选择</option>
+                            {{range $index, $elem := .adminGroups}}
+                            <option value="{{$elem.Name}}">{{$elem.Name}}</option>
+                            {{end}}
+                        </select>
+                        <button type="button" class="btn btn-default" onclick="get_group_host()">查询</button>
+                        <label class="label label-warning">一个MySQL实例仅可属于一个分组</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><em>*</em>hosts</label>
+                        <textarea class="form-control" rows="4" id="create_relation_group_related_hosts"
+                                  placeholder="格式： ip 多条记录回车换行..."></textarea>
+                        <label class="label label-warning">实例信息</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><em>*</em>消息格式</label>
+                        <select class="combobox form-control" id="create_relation_format_combobox">
+                            <option value="">请选择</option>
+                            <option value="com.jd.binlog.convert.ProtobufConverter">protobuf</option>
+                            <option value="com.jd.binlog.convert.AvroConverter">avro</option>
+                        </select>
+                        <label class="label label-warning">protobuf: 默认采用protobuf格式</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><em>*</em>存储类型</label>
+                        <select class="combobox form-control" id="create_relation_storage_type_combobox">
+                            <option value="">请选择</option>
+                            <option value="MQ_STORAGE">MQ</option>
+                            <option value="KV_STORAGE">KV</option>
+                        </select>
+                        <label class="label label-warning">MQ:消息队列存储类型包括kafka/jmq; KV:目标存储为KV,如redis/jimdb(暂不支持)</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><em>*</em>主题列表</label>
+                        <select class="js-example-responsive form-control"
+                                multiple="multiple" id="create_relation_rule_ids"
+                                name="create_relation_rule_ids"></select>
+                        <label class="label label-warning">MQ管理页面的主题列表</label>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="save_create_relation()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 初始化
+    function init_create_relation_modal(row) {
+        $('#create_relation_rule_ids').select2({
+            tags: true
+        });
+
+        // edit_mq_filter_ids
+        $.ajax({
+            type: "POST",
+            url: "/rule/list",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (rst, status) {
+                console.log(rst);
+                var ids = new Array();
+                $.each(rst, function (i, v) {
+                    ids.push({
+                        id: v.RuleId,
+                        text: v.Name
+                    });
+                });
+
+                $('#create_relation_rule_ids').select2({
+                    data: ids
+                });
+            }
+        });
+    }
+
+    function get_group_host() {
+        var group = $("#create_relation_group_combobox").val();
+        if (group == "") {
+            // 分组为空 不可查询
+            showMessage("分组为空 无法执行查询");
+            return
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/instance/admin/list",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                "group": group
+            }),
+            success: function (rst, status) {
+                console.log(rst);
+                var hosts = "";
+                $.each(rst, function (i, v) {
+                    hosts += (v.Host + ":" + v.Port + "\n");
+                });
+                $("#create_relation_group_related_hosts").val(hosts);
+            }
+        });
+    }
+
+    $("#create_relation_modal").on("hide.bs.modal", function () {
+        // 清空
+        $("#create_relation_group_related_hosts").val("");
+        $("#create_relation_storage_type_combobox").val("");
+        $("#create_relation_format_combobox").val("");
+        $("#create_relation_group_combobox").val("");
+        $("#create_relation_rule_ids").val("");
+    });
+</script>

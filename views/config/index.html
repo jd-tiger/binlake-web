@@ -1,0 +1,343 @@
+{{template "base/base.html" .}}
+{{define "head"}}
+    <title>{{.appname}}</title>
+
+{{end}}
+{{define "body"}}
+    <body class="hold-transition skin-blue sidebar-mini">
+    <div id="wrapper">
+        {{template "base/navbar.html" .}}
+
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            <!-- <section class="content-header">
+                <h1>
+                    集群管理
+                </h1>
+                <ol class="breadcrumb">
+                    <li><a href="/index"><i class="fa fa-dashboard"></i>主页</a></li>
+                    <li class="active">集群管理</li>
+                </ol>
+            </section> -->
+            <div>
+                <ol class="breadcrumb">
+                    <li><a href="/index">首页</a></li>
+                    <li class="active">配置管理</li>
+                </ol>
+            </div>
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>查询条件</h5>
+                </div>
+                <div class="ibox-content">
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <select class="combobox form-control" id="index_config_combobox">
+                                    <option value="">请选择</option>
+                                    {{range $index, $elem := .confs}}
+                                        <option value="{{$elem.Keyword}}">{{$elem.Mark}}</option>
+                                    {{end}}
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-search" type="button" onclick="filter_config()">查询</button>
+                    </form>
+                </div>
+            </div>
+            <!-- Main content -->
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>查询结果</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                    <div style="margin-top:48px;padding-left:0px;">
+
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    {{template "config/create_config.html" . }}
+                    {{template "config/edit_config.html" . }}
+                    <!-- <div class="row">
+                <div class="col-md-4">
+                    <button type="button" class="btn btn-large btn-success" onclick="create_config_show()">创建集群
+                    </button>
+                    <button type="button" class="btn btn-large btn-success" onclick="edit_config_show()">编辑集群
+                    </button>
+                </div>
+                <div class="col-md-8" align="right">
+                    <select class="combobox" id="index_config_combobox">
+                        <option value="">请选择</option>
+                        {{range $index, $elem := .config}}
+                        <option value="{{$elem.Zk}}">{{$elem.Mark}}</option>
+                        {{end}}
+                    </select>
+                    <button type="button" class="glyphicon glyphicon-search" onclick="filter_config()">搜索</button>
+                </div>
+            </div> -->
+                    <div class="bt-position">
+                        <a class="btn btn-success btn-add-project" onclick="create_config_show()">创建新配置</a>
+                    </div>
+                    <table id="config_table"
+                           data-toggle="table"
+                           data-method="post"
+                           data-query-params="config_post_paras"
+                           data-url="/config/list"
+                           data-pagination="true"
+                           data-side-pagination="client"
+                           data-sort-order="desc"
+                           class="table-striped"
+                           data-page-list="[5, 10, 20, 50, 100, 200, 1000, 2000]"
+                           data-row-style="rowStyle"
+                           style="word-break:break-all; word-wrap:break-all;">
+                        <thead>
+                        <tr>
+                            <th data-field="operation" data-formatter="configOptFormatter" data-events="optEvents"
+                                class="iconGroups">操作
+                            </th>
+                            <th data-field='keyword' data-sortable="true">关键字</th>
+                            <th data-field='mark' data-sortable="true">备注信息</th>
+                            <th data-field='dns' data-sortable="true">wave集群</th>
+                            <th data-field='zk' data-sortable="true">zk地址</th>
+                            <th data-field='path' data-sortable="true">zk路径</th>
+                            <th data-field='slaveid' data-sortable="true">SlaveID</th>
+                            <th data-field='slaveuuid' data-sortable="true">SlaveUUID</th>
+                            <th data-field='dbsurl' data-sortable="true">dbs-api地址前缀</th>
+                            <th data-field='mqaddr' data-sortable="true">mq生产者地址</th>
+                            <th data-field='createtime' data-sortable="true">创建日期</th>
+                            <th data-field='updatetime' data-sortable="true">更新日期</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <!-- /.content -->
+        </div>
+    </div>
+
+    <script>
+        // 点击事件
+        window.optEvents = {
+            'click .edit': show_edit_config_modal,
+            'click .delete': confirm_delete_config,
+        };
+
+        config_post_paras: function config_post_paras() {
+            return {"keyword": $("#index_config_combobox").val()};
+        }
+
+        function create_config_show() {
+            $("#create_config_modal").modal('show');
+        }
+
+        function configOptFormatter(value, row) {
+            let ret_butns = [];
+            ret_butns.push('<a class="edit glyphicon glyphicon-pencil" href="javascript:void(0)" title="编辑">');
+            ret_butns.push('<a class="delete glyphicon glyphicon-trash" href="javascript:void(0)" title="删除">');
+            if (ret_butns.length > 0) {
+                return ret_butns.join('');
+            } else {
+                return '';
+            }
+        }
+
+        function confirm_delete_config(e, value, row, index) {
+            confirmDialog(row.zk, "删除确认", "确认要删除配置<b>" + row.mark + "</b>吗?", delete_config);
+        }
+
+        function show_edit_config_modal(e, value, row, index) {
+            $.ajax({
+                type: "POST",
+                url: "/config/waves",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    "zk": row.zk,
+                }), // 转换成json
+                success: function (rst, status) {
+                    console.log("status", status);
+                    console.log(rst);
+                    row.waves = rst;
+                    init_edit_config_modal(row);
+                    $("#edit_config_modal").modal('show');
+                }
+            });
+        }
+
+        function edit_config() {
+            var keyword = $(".edit_config_keyword").val().trim();
+            var mark = $(".edit_config_mark").val().trim();
+            let dns = $(".edit_config_dns").val().trim();
+            var zk = $(".edit_config_zk").val().trim();
+            var path = $(".edit_config_zk_path").val().trim();
+            var slaveid = $(".edit_config_slave_id").val().trim();
+
+            var slaveuuid = $(".edit_config_slave_uuid").val().trim();
+            var dbsurl = $(".edit_config_dbsurl").val().trim();
+            var dbstoken = $(".edit_config_dbstoken").val().trim();
+            var mqaddr = $(".edit_config_mqaddr").val().trim();
+            var waves = $(".edit_config_server_ips").val().trim().split("\n");
+
+            if (keyword == "" || mark == "" || dns == "" || zk == "" || dbsurl == "" ||
+                mqaddr == "" || path == "" || slaveid == "" || slaveuuid == "" || waves.length == 0) {
+                showMessage("参数不能为空或者包含空白字符!!");
+                return
+            }
+
+            let a = new Set();
+            for (let i = 0; i < waves.length; i++) {
+                let w = waves[i].trim();
+                if (w.length != 0) {
+                    a.add(w);
+                }
+            }
+
+            if (a.size == 0) {
+                showMessage("wave ip不能为空!!");
+                return
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/config/update",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    "keyword": keyword,
+                    "mark": mark,
+                    "dns": dns,
+                    "zk": zk,
+                    "path": path,
+                    "slaveid": slaveid,
+                    "slaveuuid": slaveuuid,
+                    "dbsurl": dbsurl,
+                    "dbstoken": dbstoken,
+                    "mqaddr": mqaddr,
+                    "waves": Array.from(a),
+                }), // 转换成json
+                success: function (rst, status) {
+                    if (rst.code == 1000) {
+                        filter_config();
+                        refresh_config();
+                        $("#edit_config_modal").modal('hide');
+                    } else {
+                        showMessage(rst.message);
+                    }
+                }
+            });
+        }
+
+        function create_config() {
+            var keyword = $(".create_config_keyword").val().trim();
+            var mark = $(".create_config_mark").val().trim();
+            let dns = $(".create_config_dns").val().trim();
+            var zk = $(".create_config_zk").val().trim();
+            var path = $(".create_config_zk_path").val().trim();
+            var slaveid = $(".create_config_slave_id").val().trim();
+            var slaveuuid = $(".create_config_slave_uuid").val().trim();
+            var dbsurl = $(".create_config_dbsurl").val().trim();
+            var dbstoken = $(".create_config_dbstoken").val().trim();
+            var mqaddr = $(".create_config_mqaddr").val().trim();
+            var waves = $(".create_config_server_ips").val().trim().split("\n");
+
+            if (keyword == "" || mark == "" || dns == "" || zk == "" || dbsurl == "" ||
+                mqaddr == "" || path == "" || slaveid == "" || slaveuuid == "" || waves.length == 0) {
+                showMessage("参数不能为空或者包含空白字符!!");
+                return
+            }
+
+            let a = new Set();
+            for (var i = 0; i < waves.length; i++) {
+                let w = waves[i].trim();
+                if (w.length != 0) {
+                    a.add(w);
+                }
+            }
+
+            if (a.size == 0) {
+                showMessage("wave ip不能为空!!");
+                return
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/config/create",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    "keyword": keyword,
+                    "mark": mark,
+                    "dns": dns,
+                    "zk": zk,
+                    "path": path,
+                    "slaveid": slaveid,
+                    "slaveuuid": slaveuuid,
+                    "dbsurl": dbsurl,
+                    "dbstoken": dbstoken,
+                    "mqaddr": mqaddr,
+                    "waves": Array.from(a),
+                }), // 转换成json
+                success: function (rst, status) {
+                    if (rst.code == 1000) {
+                        filter_config();
+                        refresh_config();
+                        $("#create_config_modal").modal('hide');
+                    } else {
+                        showMessage(rst.message);
+                    }
+                }
+            });
+        }
+
+        function delete_config(zk) {
+            // 删除配置
+            $.ajax({
+                type: "POST",
+                url: "/config/delete",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    "zk": zk,
+                }), // 转换成json
+                success: function (rst, status) {
+                    if (rst.code == 1000) {
+                        filter_config();
+                        refresh_config();
+                        $("#create_config_modal").modal('hide');
+                    } else {
+                        showMessage(rst.message);
+                    }
+                }
+            });
+        }
+
+        function filter_config() {
+            $("#config_table").bootstrapTable('refreshOptions', {url: '/config/list'});
+        }
+
+        function refresh_config() {
+            // 刷新combobox
+            $.ajax({
+                type: "POST",
+                url: "/config/list",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (rst, status) {
+                    $("#index_config_combobox").empty();
+
+                    var ops = "<option value=''>请选择</option>";
+                    for (var i = 0; i < rst.length; i++) {
+                        ops += ("<option value='" + rst[i].keyword + "'>" + rst[i].mark + "</option>\n");
+                    }
+                    $("#index_config_combobox").append(ops);
+                }
+            });
+        }
+    </script>
+
+    </body>
+{{end}}

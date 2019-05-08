@@ -1,0 +1,319 @@
+<div class="modal fade  bs-example-modal-lg" id="editGroupModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                </button>
+                <div class="control-label edit-group-modal-title">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <div>
+                        <button type="button" class="btn btn-large btn-success" onclick="openAddMemForm()">打开添加成员表单
+                        </button>
+                        <button type="button" class="btn btn-large btn-success" onclick="closeAddMemForm()">关闭添加成员表单
+                        </button>
+                    </div>
+                    <div class="add-member-form-head">
+                    </div>
+                    <div class="add-member-form-body">
+                    </div>
+                </div>
+
+                <br>
+                <table id="groupMemberTable"
+                       data-method="post"
+                       data-toggle="table"
+                       data-url="/group/members"
+                       data-query-params="ugMemParas"
+                       data-pagination="true"
+                       data-side-pagination="client"
+                       data-sort-order="desc"
+                       data-page-list="[5, 10, 20, 50, 100, 200, 1000, 2000]"
+                       data-row-style="rowStyle"
+                       style="word-break:break-all; word-wrap:break-all;">
+                    <thead>
+                    <tr>
+                        <th data-field='Erp' data-sortable="true">成员</th>
+                        <th data-field='Role' data-sortable="true">角色</th>
+                        <th data-field='CreateTime' data-sortable="true">创建日期</th>
+                        <th data-field='UpdateTime' data-sortable="true">更新日期</th>
+                        <th data-formatter="deleteUserFormatter" data-events="memberActionEvents">成员删除</th>
+                        <th data-formatter="switchUserFormatter" data-events="memberActionEvents">角色切换</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var membersReg = new RegExp(/^[A-Za-z0-9]*$/);
+
+    var ugMemData = "";
+
+    ugMemParas: function ugMemParas() {
+        if (ugMemData == "") {
+            return;
+        }
+        return ugMemData;
+    }
+
+    function openAddMemForm() {
+        closeAddMemForm();
+
+        $(".add-member-form-head").append("<div class=\"form-group\">\n" +
+                "                            <div class=\"col-md-3\">\n" +
+                "                                <label class=\"\">\n" +
+                "                                    <em>*</em>用户名\n" +
+                "                                </label>\n" +
+                "                            </div>\n" +
+                "                            <div class=\"col-md-3\">\n" +
+                "                                <label class=\"\">\n" +
+                "                                    <em>*</em>邮箱前缀\n" +
+                "                                </label>\n" +
+                "                            </div>\n" +
+                "                            <div class=\"col-md-3\">\n" +
+                "                                <label class=\"\">\n" +
+                "                                    <em>*</em>部门名称\n" +
+                "                                </label>\n" +
+                "                            </div>\n" +
+                "                            <div class=\"col-md-3\">\n" +
+                "                                <label class=\"\">\n" +
+                "                                    <em>*</em>角色\n" +
+                "                                </label>\n" +
+                "                            </div>\n" +
+                "                        </div>");
+
+        $(".add-member-form-body").append("<div class=\"form-group\">\n" +
+                "                            <div class=\"col-md-3\">\n" +
+                "                                <input type=\"text\"\n" +
+                "                                       class=\"form-middle-control user-name\"\n" +
+                "                                       placeholder=\"请填写用户名 erp\">\n" +
+                "                            </div>\n" +
+                "                            <div class=\"col-md-3\">\n" +
+                "                                <input type=\"text\"\n" +
+                "                                       class=\"form-middle-control email-prefix\"\n" +
+                "                                       placeholder=\"<b>邮箱前缀</b>\">\n" +
+                "                            </div>\n" +
+                "                            <div class=\"col-md-3\">\n" +
+                "                                <input type=\"text\"\n" +
+                "                                       class=\"form-middle-control org-name\"\n" +
+                "                                       placeholder=\"<b>部门名称</b>\">\n" +
+                "                            </div>\n" +
+                "                            <div class=\"col-md-3\">\n" +
+                "                                <select class=\"form-middle-control role\">\n" +
+                "                                    <option value=\"\">请选择</option>\n" +
+                "                                    <option value=\"admin\">组管理员</option>\n" +
+                "                                    <option value=\"user\">普通用户</option>\n" +
+                "                                </select>\n" +
+                "                            </div>\n" +
+                "                        </div>\n" +
+                "<button type=\"button\" class=\"btn btn-large btn-success margin-top\" onclick='addMember()'>添加到分组</button>");
+    }
+
+    function closeAddMemForm() {
+        $(".add-member-form-head").empty();
+        $(".add-member-form-body").empty();
+    }
+
+    function addMember() {
+        var erp = $(".user-name").val().trim();
+        var emailPre = $(".email-prefix").val().trim();
+        var orgName = $(".org-name").val().trim();
+        var role = $(".role").val().trim();
+
+        if (role == "") {
+            showMessage("角色必选 不能为空");
+            return;
+        }
+
+        if (orgName == "") {
+            showMessage("所属部门名必填 不能为空");
+            return;
+        }
+
+        if (erp == "") {
+            showMessage("用户名 不能为空");
+            return;
+        }
+
+        if (emailPre == "") {
+            showMessage("邮箱前缀 不能为空");
+            return;
+        }
+
+        if (!membersReg.test(erp) || !membersReg.test(emailPre)) {
+            showMessage("用户名 " + erp + "or 邮箱前缀 " + emailPre + " 不符合字母数字组合正则表达式");
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/group/check",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({"group": ugMemData.name}), // 空串
+            success: function (rst, status) {
+                if (rst.code == 1000) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/group/members/add",
+                        dataType: "json",
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify({
+                            "erp": erp,
+                            "name": ugMemData.name,
+                            "email": emailPre + "@jd.com",
+                            "orgName": orgName,
+                            "role": role
+                        }),
+                        success: function (rst, status) {
+                            console.log(rst);
+                            if (rst.code == 1000) {
+                                showMessage("添加 成员 <b>" + erp + "</b> 到分组 " + ugMemData.name + " 成功");
+
+                                // 刷新成员表单
+                                $("#groupMemberTable").bootstrapTable('refreshOptions', {url: "/group/members"})
+
+                                // 清空消息
+                                openAddMemForm();
+                            } else {
+                                showMessage(rst.message);
+                            }
+                        }
+                    });
+                } else {
+                    showMessage("当前登录用户对组 " + ugMemData.name + "无权限");
+                }
+            }
+        });
+    }
+
+    function memberDelete(e, value, row, index) {
+        $.ajax({
+            type: "POST",
+            url: "/group/check",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({"group": row.Name}), // 空串
+            success: function (rst, status) {
+                if (rst.code == 1000) {
+                    if (row.Role == 'creator') {
+                        // 删除分组
+                        // 用户校验
+                        $.ajax({
+                            type: "POST",
+                            url: "/users/created/check",
+                            dataType: "json",
+                            contentType: "application/json; charset=utf-8",
+                            data: JSON.stringify({"erp": row.Erp, "name": row.Name}),
+                            success: function (rst, status) {
+                                if (rst.code == 1000) {
+                                    confirmDialog(row.Name, "删除确认", "确认要删除分组<b>" + row.Name + "</b>吗?", deleteGroup);
+                                } else {
+                                    showMessage("非组 " + row.Name + " 创建者 " + "无删除创建者权限");
+                                }
+                            }
+                        });
+                    } else {
+                        // 删除成员
+                        confirmDialog(row.Id, "删除确认", "确认要删除成员<b>" + row.Erp + "</b>吗?", deleteMember);
+                    }
+                } else {
+                    showMessage("当前登录用户对组 " + row.Name + "无权限");
+                }
+            }
+        });
+    }
+
+    function switchRole(e, value, row, index) {
+        $.ajax({
+            type: "POST",
+            url: "/group/check",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({"group": row.Name}), // 空串
+            success: function (rst, status) {
+                if (rst.code == 1000) {
+                    if (row.Role == 'creator') {
+                        showMessage("组创建者角色不能被更新");
+                        return;
+                    }
+
+                    var role = "admin"; // 普通用戶 -> 管理員
+                    if (row.Role == 'admin') {
+                        role = "user"; // admin -> 普通用戶
+                    }
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/users/role/switch",
+                        dataType: "json",
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify({"erp": row.Erp, "name": row.Name, "role": role}), // 空串
+                        success: function (rst, status) {
+                            if (rst.code == 1000) {
+                                $("#groupMemberTable").bootstrapTable('refreshOptions', {url: "/group/members"})
+                            } else {
+                                showMessage("切換用戶角色失败 " + rst.message);
+                            }
+                        }
+                    });
+                } else {
+                    showMessage("当前登录用户对组 " + row.Name + "无权限");
+                }
+            }
+        });
+    }
+
+    function deleteMember(userId) {
+        // 删除成员
+        $.ajax({
+            type: "POST",
+            url: "/group/members/delete",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({"id": userId}), // 空串
+            success: function (rst, status) {
+                if (rst.code == 1000) {
+                    $("#groupMemberTable").bootstrapTable('refreshOptions', {url: "/group/members"})
+                } else {
+                    showMessage("删除成员 " + userId + " 失败 " + rst.message);
+                }
+            }
+        });
+    }
+
+    window.memberActionEvents = {
+        'click .delete': memberDelete,
+        'click .switch': switchRole,
+    };
+
+    function deleteUserFormatter() {
+        return '<a class="delete glyphicon glyphicon-trash" href="javascript:void(0)" title="删除">';
+    }
+
+    function switchUserFormatter() {
+        return '<a class="switch glyphicon glyphicon-refresh" href="javascript:void(0)" title="切换">';
+    }
+
+    // 初始化
+    function initEditGroupModal(data) {
+        // 设置初始化环境变量
+        ugMemData = data;
+
+        $(".edit-group-modal-title").empty();
+
+        $(".edit-group-modal-title").append("查看分组 " + data.name);
+        $("#groupMemberTable").bootstrapTable('refreshOptions', {url: "/group/members"})
+    }
+
+    $("#editGroupModal").on("hide.bs.modal", function () {
+        ugMemData = "";
+    });
+
+</script>

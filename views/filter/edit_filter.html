@@ -1,0 +1,164 @@
+<div class="modal fade  bs-example-modal-lg" id="edit_filter_modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title edit_filter_modal_title">编辑过滤器</h4>
+            </div>
+            <div class="modal-body" id="edit_filter_modal_content">
+                <form class="form-horizontal" role="form">
+                    <span class="edit_filter_id" aria-hidden="true"></span>
+                    <div class="form-group">
+                        <label class="form-label"><em>*</em>分组名称</label>
+                        <select class="combobox form-control" id="edit_filter_group_combobox" disabled="disabled">
+                            <option value="">请选择</option>
+                            {{range $index, $elem := .adminGroups}}
+                            <option value="{{$elem.Name}}">{{$elem.Name}}</option>
+                            {{end}}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><em>*</em>过滤器名称</label>
+                        <input type="text"
+                               class="form-control edit_filter_name"
+                               name="edit_filter_name"
+                               placeholder="过滤器名称用于选择显示"
+                               disabled="disabled">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><em>*</em>类型</label>
+                        <select class="form-control edit_filter_type">
+                            <option value="">请选择</option>
+                            <option value="WHITE">白名单</option>
+                            <option value="BLACK">黑名单</option>
+                        </select>
+                        <label class="label label-warning">白名单: 保留信息  黑名单: 过滤信息</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><em>*</em>库正则式</label>
+                        <input type="text"
+                               maxlength="70"
+                               class="form-control edit_filter_db_set"
+                               name="edit_filter_db_set"
+                               placeholder="库名正则表达式">
+                        <label class="label label-warning">如填写"db" 匹配名称为db的库</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><em>*</em>表正则式</label>
+                        <input type="text"
+                               maxlength="180"
+                               class="form-control edit_filter_table_set"
+                               name="edit_filter_table_set"
+                               placeholder="表名正则表达式">
+                        <label class="label label-warning">如填写"table" 匹配名称为table的表</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><em>*</em>事件类型</label>
+                        <select class='form-control edit_filter_binlog_events' multiple='multiple'>
+                            <option value='INSERT'>INSERT</option>
+                            <option value='UPDATE'>UPDATE</option>
+                            <option value='DELETE'>DELETE</option>
+                            <option value='CREATE'>CREATE</option>
+                            <option value='ALTER'>ALTER</option>
+                            <option value='ERASE'>ERASE</option>
+                            <option value='QUERY'>QUERY</option>
+                            <option value='TRUNCATE'>TRUNCATE</option>
+                            <option value='RENAME'>RENAME</option>
+                            <option value='CINDEX'>CINDEX</option>
+                            <option value='DINDEX'>DINDEX</option>
+                        </select>
+                        <label class="label label-warning">如若不做选择,则为全部类型</label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">伪列信息</label>
+                        <input type="text" maxlength="128"
+                               class="form-control edit_filter_fake_column_set"
+                               name="edit_filter_fake_column_set"
+                               placeholder="列名列值以&quot;:&quot;链接,多个以&quot;,&quot;分隔">
+                        <label class="label label-warning">伪列用来表示数据的来源信息, 业务方自定义字段列名, 字段值</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><em>*</em>业务主键</label>
+                        <input type="text" maxlength="128"
+                               class="form-control edit_filter_business_keys"
+                               name="edit_filter_business_keys"
+                               placeholder="列名以&quot;,&quot;分割,例column1,column2,column3">
+                        <label class="label label-warning">可由多个表字段组成,用来唯一标志表当中的一行记录</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">保留列集</label>
+                        <input type="text" maxlength="1024"
+                               class="form-control edit_filter_white_column_set"
+                               name="edit_filter_white_column_set"
+                               placeholder="列名以&quot;,&quot;分割,例column1,column2,column3">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">过滤列集</label>
+                        <input type="text" maxlength="1024"
+                               class="form-control edit_filter_black_column_set"
+                               name="edit_filter_black_column_set"
+                               placeholder="列名以&quot;,&quot;分割,例column1,column2,column3">
+                        <div style="margin-left: 120px;margin-top: 10px;width: 39%" class="list-group-item list-group-item-success">
+                            <h5>若保留过滤列都不填写,默认为保留所有列</h5>
+                            <h5>在白名单中</h5>
+                            <p>如果添加保留列  则会保留当前列</p>
+                            <p>如果添加过滤列  则会过滤掉当前列值,列值为null</p>
+                            <h5>在黑名单中</h5>
+                            <p>添加保留列与过滤列都不会生效</p>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="update_filter()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(".edit_filter_binlog_events").multiselect({
+        buttonWidth: '150px',
+        enableCollapsibleOptGroups: true,
+        includeSelectAllOption: true
+    });
+
+
+    function init_edit_filter(row) {
+        $(".edit_filter_id").val(row.Id);
+        $(".edit_filter_name").val(row.Name);
+        $(".edit_filter_type").val(row.Type);
+
+        var dbReg = row.TableName.split("\\.")[0];
+        var tableReg = row.TableName.split("\\.")[1];
+
+        $(".edit_filter_db_set").val(dbReg);
+        $(".edit_filter_table_set").val(tableReg);
+
+        $(".edit_filter_binlog_events").multiselect('select', row.Events.split(","));
+        $(".edit_filter_white_column_set").val(row.WhiteColumns);
+        $(".edit_filter_black_column_set").val(row.BlackColumns);
+        $(".edit_filter_fake_column_set").val(row.FakeCols);
+        $(".edit_filter_business_keys").val(row.BusinessKeys);
+        $("#edit_filter_group_combobox").val(row.Group);
+    }
+
+    $("#edit_filter_modal").on("hide.bs.modal", function () {
+        // 清空
+        $(".edit_filter_id").val("");
+        $(".edit_filter_name").val("");
+        $(".edit_filter_type").val("");
+        $(".edit_filter_table_set").val("");
+        $(".edit_filter_binlog_events").val("");
+        $(".edit_filter_white_column_set").val("");
+        $(".edit_filter_black_column_set").val("");
+        $(".edit_filter_fake_column_set").val("");
+        $(".edit_filter_business_keys").val("");
+        $("#edit_filter_group_combobox").val("");
+    });
+</script>

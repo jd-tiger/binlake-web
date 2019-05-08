@@ -1,0 +1,288 @@
+{{template "base/base.html" .}}
+{{define "head"}}
+<title>{{.appname}}</title>
+
+{{end}}
+{{define "body"}}
+<body class="hold-transition skin-blue sidebar-mini">
+<div id="wrapper">
+    {{template "base/navbar.html" .}}
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <!-- <section class="content-header">
+            <h1>
+                实例规则关系
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="/index"><i class="fa fa-dashboard"></i>主页</a></li>
+                <li class="active">实例规则关系</li>
+            </ol>
+        </section> -->
+        <div>
+            <ol class="breadcrumb">
+                <li><a href="/index">首页</a></li>
+                <li class="active">实例主题关系</li>
+            </ol>
+        </div>
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>查询条件</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <form class="form-inline">
+                     <div class="form-group">
+                        <div class="input-group">
+                            <select class="combobox form-control" id="relation_group_combobox">
+                                <option value="">请选择</option>
+                                {{range $index, $elem := .UserGroups}}
+                                <option value="{{$elem.Name}}">{{$elem.Name}}</option>
+                                {{end}}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="text" name="relation_host" placeholder="请输入MySQL host"  class="form-control relation_host"/>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-search" type="button" onclick="filter_host()">查询</button>
+                </form>
+            </div>
+        </div>
+        <!-- Main content -->
+        <div class="ibox">
+             <div class="ibox-title">
+                <h5>查询结果</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                </div>
+            </div>
+            {{template "relation/edit_relation.html" . }}
+            {{template "relation/create_relation.html" . }}
+            <!-- <div class="row">
+                <div class="col-md-8">
+                    <button type="button" class="btn btn-large btn-success" onclick="create_relation()">创建实例规则关系
+                    </button>
+                </div>
+                <div align="right">
+                    <select class="combobox" id="relation_group_combobox">
+                        <option value="">请选择</option>
+                        {{range $index, $elem := .UserGroups}}
+                        <option value="{{$elem.Name}}">{{$elem.Name}}</option>
+                        {{end}}
+                    </select>
+                    <input type="text" class="relation_host" name="relation_host" placeholder="请输入MySQL host">
+                    <button type="button" class="glyphicon glyphicon-search" onclick="filter_host()">搜索</button>
+                </div>
+            </div> -->
+            <div class="ibox-content">
+                <div  class="bt-position">
+                    <a class="btn btn-success btn-add-project" onclick="create_relation()">创建实例主题关系</a>
+                    <!--  <button type="button" class="btn btn-large btn-success" onclick="create_filter()">创建过滤器</button> -->
+                </div>
+                <table id="relation_table"
+                       data-toggle="table"
+                       data-method="post"
+                       data-query-params="relation_post_paras"
+                       data-url="/relation/list"
+                       data-pagination="true"
+                       data-side-pagination="client"
+                       data-sort-order="desc"
+                       class="table-striped"
+                       data-page-list="[5, 10, 20, 50, 100, 200, 1000, 2000]"
+                       data-row-style="rowStyle"
+                       style="word-break:break-all; word-wrap:break-all;">
+                    <thead>
+                    <tr>
+                        <th data-field="operation" data-formatter="optFormatter" data-events="optEvents" class="iconGroups">操作</th>
+                        <th data-field='Group' data-sortable="true">分组名称</th>
+                        <th data-field='Host' data-sortable="true">实例Host</th>
+                        <th data-field='Port' data-sortable="true">实例Port</th>
+                        <th data-field='StorageType' data-sortable="true">存储类型</th>
+                        <th data-field='ConvertClass' data-sortable="true">消息转换格式</th>
+                        <!--<th data-field='RuleId' data-sortable="true">规则ID</th>-->
+                        <th data-field='Name' data-sortable="true">主题名称</th>
+                        <th data-field='CreateTime' data-sortable="true">创建日期</th>
+                        <th data-field='UpdateTime' data-sortable="true">更新日期</th>
+                        <!-- <th data-formatter="edit_relation_formatter" data-events="relation_action_events">编辑</th>
+                        <th data-formatter="delete_relation_formatter" data-events="relation_action_events">删除</th> -->
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+</div>
+
+<script>
+    relation_post_paras: function relation_post_paras() {
+        console.log("relation_post_paras");
+        return {"host": $(".relation_host").val(), "group": $("#relation_group_combobox").val()};
+    }
+
+    // 点击事件
+   /* window.relation_action_events = {
+        'click .edit': edit_relation_action,
+        'click .delete': delete_relation_action
+    };*/
+    window.optEvents = {
+        'click .edit': edit_relation_action,
+        'click .delete': delete_relation_action
+    };
+    //添加`编辑`列对应事件
+   /* function edit_relation_formatter(value, row, index) {
+        return '<a class="edit glyphicon glyphicon-pencil" href="javascript:void(0)" title="编辑">';
+    }
+*/
+    //添加`删除`列对应事件
+   /* function delete_relation_formatter(value, row, index) {
+        return '<a class="delete glyphicon glyphicon-trash" href="javascript:void(0)" title="删除">';
+    }*/
+
+
+     function optFormatter(value, row) {
+        console.log(row);
+        var ret_butns = [];
+        //ret_butns.push('<a class="edit glyphicon glyphicon-pencil" href="javascript:void(0)" title="编辑">');
+        ret_butns.push('<a class="delete glyphicon glyphicon-trash" href="javascript:void(0)" title="删除">');
+        if (ret_butns.length > 0) {
+            return ret_butns.join('');
+        } else {
+            return '';
+        }
+    }
+
+    function edit_relation_action(e, value, row, index) {
+        console.log("edit_relation_action");
+        init_edit_relation_modal(row);
+        $("#edit_relation_modal").modal('show');
+    }
+
+    function delete_relation_action(e, value, row, index) {
+        confirmDialog(row, "删除确认", "确认要删除与主题<b>" + row.Name + "</b>的关联关系吗?", delete_relation);
+    }
+
+    function delete_relation(row) {
+        $.ajax({
+            type: "POST",
+            url: "/relation/delete",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                "instanceId": row.InstanceId, "group": row.Group, "ruleId": row.RuleId
+            }), // 空串
+            success: function (rst, status) {
+                if (rst.code == 1000) {
+                    showMessage("删除主题与实例关联关系<b>成功</b>!!");
+                    filter_host();
+                    return
+                }
+
+                // 显示错误信息
+                showMessage(rst.message);
+            }
+        });
+    }
+
+    function create_relation() {
+        console.log("create_relation");
+        init_create_relation_modal();
+        $("#create_relation_modal").modal('show');
+    }
+
+    function filter_host() {
+        $("#relation_table").bootstrapTable('refreshOptions', {url: '/relation/list'});
+    }
+
+
+    function save_edit_relation() {
+        // 更新 实例规则关系
+        var instanceId = $("#edit_relation_host_combobox").val();
+        var storageType = $("#edit_relation_storage_type_combobox").val();
+        var convertClass = $("#edit_relation_format_combobox").val();
+        var group = $("#edit_relation_group_combobox").val();
+        var ruleIds = $("#edit_relation_rule_ids").val();
+
+        if (ruleIds == null || instanceId == ""
+            || convertClass == "" || group == ""
+            || ruleIds == "" || storageType == "") {
+            showMessage("参数必选不能为<b>空</b>!!")
+            return
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/relation/update",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                "instanceId": instanceId, "group": group,
+                "convertClass": convertClass, "storageType": storageType,
+                "ruleIds": ruleIds
+            }), // 空串
+            success: function (rst, status) {
+                if (rst.code == 1000) {
+                    showMessage("主题与实例关系绑定<b>成功</b>!!");
+                    $("#edit_relation_modal").modal('hide');
+                    filter_host();
+                    return
+                }
+
+                // 显示错误信息
+                showMessage(rst.message);
+            }
+        });
+    }
+
+
+    function save_create_relation() {
+        // 保存创建 实例规则关系
+        var hosts = $("#create_relation_group_related_hosts").val();
+        var storageType = $("#create_relation_storage_type_combobox").val();
+        var convertClass = $("#create_relation_format_combobox").val();
+        var group = $("#create_relation_group_combobox").val();
+        var ruleIds = $("#create_relation_rule_ids").val();
+
+        if (ruleIds == null || hosts == "" || convertClass == "" || group == "" || ruleIds == "" || storageType == "") {
+            showMessage("参数必选不能为<b>空</b>!!")
+            return
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/relation/create",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                "hosts": hosts.trim().split("\n"), "group": group,
+                "convertClass": convertClass, "storageType": storageType,
+                "ruleIds": ruleIds
+            }),
+            success: function (rst, status) {
+                if (rst.code == 1000) {
+                    showMessage("主题与实例关系绑定<b>成功</b>!!");
+                    $("#create_relation_modal").modal('hide');
+                    filter_host();
+                    return
+                }
+
+                // 显示错误信息
+                showMessage(rst.message);
+            }
+        });
+    }
+</script>
+</body>
+{{end}}

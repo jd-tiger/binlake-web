@@ -1,0 +1,209 @@
+
+    .fl{
+        float: left;
+        width: 50%;
+    }
+    .ibox{
+        background-color: #fff;
+        border: 1px solid #dee5e7;
+        border-radius: 4px;
+        -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+        box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+        width: 98%;
+        margin:0 auto 20px;
+
+
+    }
+    .ibox-title {
+        height: 41px;
+        border-color: #edf1f2;
+        background-color: #f6f8f8;
+        color: #333;
+        font-weight: 700;
+        border-radius: 2px 2px 0 0;
+        padding: 15px 15px 3px 15px;
+        border-bottom: 1px solid transparent;
+        display: block;
+        overflow: hidden;
+    }
+
+    .ibox-content {
+        background-color: #ffffff;
+        color: inherit;
+        padding: 15px 20px 20px 20px;
+        border-color: #e7eaec;
+        -webkit-border-image: none;
+        -o-border-image: none;
+        border-image: none;
+        border-style: solid solid none;
+        border-width: 1px 0px;
+    }
+
+    .ibox-title h5 {
+        display: inline-block;
+        font-size: 14px;
+        margin: 0 0 7px;
+        padding: 0;
+        text-overflow: ellipsis;
+        float: left;
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #f9f9f9;
+    }
+    .breadcrumb a{
+    	color: #676a6c;
+    }
+    .btn-primary{
+    	background: #02348a;
+    }
+
+    .ibox-tools {
+        display: inline-block;
+        float: right;
+        margin-top: 0;
+        position: relative;
+        padding: 0;
+    }
+
+    .ibox-tools a {
+        cursor: pointer;
+        margin-left: 5px;
+        color: #c4c4c4;
+    }
+    .bt-position{
+    	margin:10px 0 10px 0;
+    }
+
+    .form-group .form-label {
+        float: left;
+        /*width: 150px;*/
+        width: 100px;
+        text-align: right;
+        margin-right: 20px;
+        margin-top: 3px;
+    }
+    .form-group .form-control{
+        width: 240px;
+        display: inline;
+    }
+    .form-group .form-control{
+        width: 350px;
+    }
+    .form-group .form-short-control{
+        width: 150px;
+    }
+    .form-group .form-long-control{
+        width: 450px;
+    }
+    .form-group .form-middle-control{
+        width: 210px;
+    }
+    .form-group .form-control,.form-group .form-short-control,.form-group .form-long-control,.form-group .form-middle-control{
+        display: block;
+        border-color: #cfdadd;
+        border-radius: 2px;
+        /* height: 34px; */
+        padding: 6px 12px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #555;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #cfdadd;
+        box-shadow: none;
+        -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+        -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+        display: inline;
+    }
+    .list-group-item{
+        overflow: hidden;
+        margin-bottom: 15px;
+    }
+    .list-group-item dl{
+        line-height: 22px;
+        margin-bottom: 0;
+        overflow: hidden;
+    }
+    .list-group-item dl dt{
+        width: 120px;
+    }
+    .list-group-item dl dt,.list-group-item dl dd{
+        float: left;
+    }
+    .label-warning{
+        margin-right: 5px;
+        background-color: #f8ac59;
+        color: #fff;
+    }
+    .form-group .label{
+        display: inline;
+
+    }
+    .form-group p{
+        line-height: 15px;
+    }
+    .navbar-custom-menu .dropdown-menu{
+       background: #030a27;
+       color: #fff;
+       display: inline-block;
+       width: 60px;
+       text-align: right;
+       height: 50px;
+       margin-top: 10px;
+       border:none;
+    }
+   .navbar-custom-menu .dropdown-menu li a:hover{
+       background: #030a27;
+       color:#fff;
+    }
+   .navbar-custom-menu .dropdown-menu  li a{
+       color: #fff;
+    }
+    .main-header .logo{
+        min-height: 70px;
+    }
+    /* .navbar ul li{
+        line-height: 70px;
+    } */
+    .sidebar-menu{
+        margin-top: 30px;
+    }
+    .navbar-nav>li>a{
+        padding-top: 25px;
+    }
+    .main-header img{
+        margin-top: 15px;
+    }
+    .sidebar,.skin-blue .sidebar-menu ul li{
+        background: #0b0c11;
+    }
+    .dropdown-toggle img{
+        margin-top: 10px;
+    }
+    .modal-content .tb-tit{
+        font-size: 14px;
+        color: #333;
+        font-weight: bold;
+        text-indent: 10px;
+        line-height: 30px;
+        border-top: 1px solid #cfdadd;
+        padding:5px 0;
+        line-height: 35px;
+        margin-top: 20px;
+    }
+    .form-group em{
+        color: #f00;
+        font-size: 20px;
+        margin:8px 5px 5px 5px;
+        font-weight: bold;
+    }
+    .iconGroups a{
+        margin-right: 5px;
+    }
+    .list-group-item h5,.list-group-item span{
+        font-weight: bold;
+        margin-right: 5px;
+    }
+

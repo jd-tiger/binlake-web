@@ -1,0 +1,361 @@
+{{template "base/base.html" .}}
+{{define "head"}}
+    <title>{{.appname}}</title>
+
+{{end}}
+{{define "body"}}
+    <body class="hold-transition skin-blue sidebar-mini">
+    <div id="wrapper">
+        {{template "base/navbar.html" .}}
+
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            <!--  <section class="content-header">
+                <h1>
+                    过滤器管理
+                </h1>
+                <ol class="breadcrumb">
+                    <li><a href="/index"><i class="fa fa-dashboard"></i>主页</a></li>
+                    <li class="active">过滤器管理</li>
+                </ol>
+            </section> -->
+            <ol class="breadcrumb">
+                <li><a href="/index">首页</a></li>
+                <li class="active">过滤器管理</li>
+            </ol>
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>查询条件</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <select class="combobox form-control" id="filter_group_combobox">
+                                    <option value="">请选择</option>
+                                    {{range $index, $elem := .UserGroups}}
+                                        <option value="{{$elem.Name}}">{{$elem.Name}}</option>
+                                    {{end}}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input type="text" name="regular_expression" placeholder="输入过滤表名"
+                                       class="form-control regular_expression"/>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-search" type="button" onclick="filter_reg_tb()">查询</button>
+                    </form>
+                </div>
+            </div>
+            <!-- Main content -->
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>查询结果</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+
+                {{template "filter/create_filter.html" . }}
+                {{template "filter/edit_filter.html" . }}
+
+                <!--  <div class="row">
+               <div class="col-md-4">
+                   <button type="button" class="btn btn-large btn-success" onclick="create_filter()">创建过滤器</button>
+               </div>
+               <div align="right">
+                   <select class="combobox" id="filter_group_combobox">
+                       <option value="">请选择</option>
+                       {{range $index, $elem := .UserGroups}}
+                       <option value="{{$elem.Name}}">{{$elem.Name}}</option>
+                       {{end}}
+                   </select>
+                   <input type="text" class="regular_expression" name="regular_expression" placeholder="输入过滤表名">
+                   <button type="button" class="glyphicon glyphicon-search" onclick="filter_reg_tb()">搜索</button>
+               </div>
+           </div> -->
+
+                <div class="ibox-content">
+                    <div class="bt-position">
+                        <a class="btn btn-success btn-add-project" onclick="create_filter()">创建过滤器</a>
+                        <!--  <button type="button" class="btn btn-large btn-success" onclick="create_filter()">创建过滤器</button> -->
+                    </div>
+                    <table id="filter_table"
+                           data-toggle="table"
+                           data-method="post"
+                           data-url="/filter/list"
+                           data-query-params="filter_post_paras"
+                           data-pagination="true"
+                           data-side-pagination="client"
+                           data-sort-order="desc"
+                           class="table-striped"
+                           data-page-list="[5, 10, 20, 50, 100, 200, 1000, 2000]"
+                           data-row-style="rowStyle"
+                           style="word-break:break-all; word-wrap:break-all;">
+                        <thead>
+                        <tr>
+                            <th data-field="operation" data-formatter="optFormatter" data-events="optEvents"
+                                class="iconGroups">操作
+                            </th>
+                            <th data-field='Id' data-sortable="true">过滤ID</th>
+                            <th data-field='Type' data-sortable="true">类型</th>
+                            <th data-field='TableName' data-sortable="true">表集</th>
+                            <th data-field='Events' data-sortable="true">事件集</th>
+                            <th data-field='WhiteColumns' data-sortable="true">保留列集</th>
+                            <th data-field='BlackColumns' data-sortable="true">过滤列集</th>
+                            <th data-field='FakeCols' data-sortable="true">伪列集</th>
+                            <th data-field='BusinessKeys' data-sortable="true">业务主键</th>
+                            <th data-field='CreateTime' data-sortable="true">创建日期</th>
+                            <th data-field='UpdateTime' data-sortable="true">更新日期</th>
+                            <!--  <th data-formatter="edit_filter_formatter" data-events="filter_action_events">编辑</th>
+                            <th data-formatter="delete_filter_formatter" data-events="filter_action_events">删除</th> -->
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+
+            </div>
+            <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+
+    </div>
+
+    <script>
+        filter_post_paras: function filter_post_paras() {
+            console.log("filter_post_paras");
+            return {"table": $(".regular_expression").val(), "group": $("#filter_group_combobox").val()}
+        }
+
+        // 点击事件
+        window.optEvents = {
+            'click .edit': edit_filter_action,
+            'click .delete': delete_filter_action,
+        };
+
+        //添加`删除`列对应事件
+        /* function delete_filter_formatter(value, row, index) {
+             return '<a class="delete glyphicon glyphicon-trash" href="javascript:void(0)" title="删除">';
+         }
+
+         function edit_filter_formatter(value, row, index) {
+             return '<a class="edit glyphicon glyphicon-pencil" href="javascript:void(0)" title="编辑">';
+         }*/
+
+        function create_filter() {
+            console.log("create_filter");
+            $("#create_filter_modal").modal('show');
+        }
+
+        function filter_reg_tb() {
+            $("#filter_table").bootstrapTable('refreshOptions', {url: '/filter/list'})
+        }
+
+        function delete_filter_action(e, value, row, index) {
+            // 先检查权限
+            $.ajax({
+                type: "POST",
+                url: "/group/check",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    "group": row.Group
+                }), // 转换成json
+                success: function (rst, status) {
+                    if (rst.code == 1000) {
+                        confirmDialog(row.Id, "删除确认", "确认要删除过滤器<b>" + row.Name + "</b>吗?", delete_filter);
+                    } else {
+                        // 普通用户 无权限 直接返回
+                        showMessage(rst.message);
+                    }
+                }
+            });
+        }
+
+        function optFormatter(value, row) {
+            console.log(row);
+            var ret_butns = [];
+            ret_butns.push('<a class="edit glyphicon glyphicon-pencil" href="javascript:void(0)" title="编辑">');
+            ret_butns.push('<a class="delete glyphicon glyphicon-trash" href="javascript:void(0)" title="删除">');
+            if (ret_butns.length > 0) {
+                return ret_butns.join('');
+            } else {
+                return '';
+            }
+        }
+
+        function delete_filter(filter_id) {
+            console.log(filter_id);
+            $.ajax({
+                type: "POST",
+                url: "/filter/delete",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({"id": filter_id}), // 转换成json
+                success: function (rst, status) {
+                    if (rst.code == 1000) {
+                        showMessage("删除过滤器成功!!");
+
+                        filter_reg_tb();
+                    } else {
+                        showMessage(rst.message);
+                    }
+                },
+                error: function (req, data, error) {
+                    console.log("error occur from server")
+                }
+            });
+        }
+
+        function edit_filter_action(e, value, row, index) {
+            $.ajax({
+                type: "POST",
+                url: "/group/check",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    "group": row.Group
+                }), // 转换成json
+                success: function (rst, status) {
+                    if (rst.code == 1000) {
+                        init_edit_filter(row);
+                        $("#edit_filter_modal").modal('show');
+                    } else {
+                        // 普通用户 无权限 直接返回
+                        showMessage(rst.message);
+                    }
+                }
+            });
+        }
+
+        function update_filter() {
+            var name = $(".edit_filter_name").val();
+            var type = $(".edit_filter_type").val();
+            var group = $("#edit_filter_group_combobox").val();
+
+            if (type == "" || group == "" || name == "") {
+                showMessage("所有字段都必须填写不能为空");
+                return
+            }
+
+            var id = $(".edit_filter_id").val();
+            var events = $(".edit_filter_binlog_events").val();
+            var whiteColumns = $(".edit_filter_white_column_set").val();
+            var blackColumns = $(".edit_filter_black_column_set").val();
+            var fake_cols = $(".edit_filter_fake_column_set").val();
+            var business_keys = $(".edit_filter_business_keys").val();
+
+            var dbReg = $(".edit_filter_db_set").val();
+            var tableReg = $(".edit_filter_table_set").val();
+
+            if (dbReg == "") {
+                dbReg = ".*";
+            }
+            if (tableReg == "") {
+                tableReg = ".*";
+            }
+            var table = dbReg + "\\." + tableReg;
+
+            $.ajax({
+                type: "POST",
+                url: "/filter/update",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    "name": name,
+                    "group": group, "type": type,
+                    "table": table, "events": events,
+                    "fakeCols": fake_cols, "id": id,
+                    "whiteColumns": whiteColumns,
+                    "blackColumns": blackColumns,
+                    "businessKeys": business_keys
+                }), // 转换成json
+                success: function (rst, status) {
+                    if (rst.code == 1000) {
+                        showMessage("更改过滤器成功!!");
+
+                        // 关闭页面按钮
+                        $("#edit_filter_modal").modal('hide');
+
+                        filter_reg_tb();
+                    } else {
+                        showMessage(rst.message);
+                    }
+                },
+                error: function (req, data, error) {
+                    console.log("error occur from server")
+                }
+            });
+        }
+
+        function create_new_filter() {
+            var name = $(".create_filter_name").val().trim();
+            var type = $(".create_filter_type").val().trim();
+            var group = $("#create_filter_group_combobox").val();
+
+            if (type == "" || group == "" || name == "") {
+                showMessage("所有字段都必须填写不允许为空");
+                return
+            }
+
+            // 非必输字段
+            var events = $(".create_filter_binlog_events").val(); // 默认也是所有的
+            var whiteColumns = $(".create_filter_white_column_set").val();
+            var blackColumns = $(".create_filter_black_column_set").val();
+            var fake_cols = $(".create_filter_fake_column_set").val();
+            var business_keys = $(".create_filter_business_keys").val();
+
+            var dbReg = $(".create_filter_db_set").val().trim();
+            var tableReg = $(".create_filter_table_set").val().trim();
+            if (dbReg == "") {
+                dbReg = ".*";
+            }
+
+            if (tableReg == "") {
+                tableReg = ".*";
+            }
+            var table = dbReg + "\\." + tableReg;
+
+            $.ajax({
+                type: "POST",
+                url: "/filter/create",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    "group": group, "type": type, "name": name,
+                    "table": table, "events": events,
+                    "fakeCols": fake_cols,
+                    "whiteColumns": whiteColumns,
+                    "blackColumns": blackColumns,
+                    "businessKeys": business_keys
+                }), // 转换成json
+                success: function (rst, status) {
+                    if (rst.code == 1000) {
+                        showMessage("新建过滤器成功!!");
+
+                        // 关闭页面按钮
+                        $("#create_filter_modal").modal('hide');
+
+                        filter_reg_tb();
+                    } else {
+                        showMessage(rst.message);
+                    }
+                },
+                error: function (req, data, error) {
+                    console.log("error occur from server")
+                }
+            });
+        }
+    </script>
+    </body>
+{{end}}

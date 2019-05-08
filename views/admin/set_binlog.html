@@ -1,0 +1,88 @@
+<div class="modal fade  bs-example-modal-lg" id="admin_set_binlog_modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title admin_set_binlog_modal_title">设置binlog位置</h4>
+            </div>
+            <div class="modal-body" id="admin_set_binlog_modal_content">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label class="form-label">MySQL实例</label>
+                        <select class="combobox form-control" id="set_binlog_host_combobox" disabled="disabled">
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">设置binlog 文件</label>
+                        <select class="combobox form-control" id="set_binlog_file_combobox">
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">binlog 位置</label>
+                        <input type="text form-control" class="set_binlog_position form-control" name="set_binlog_position"
+                               placeholder="请输入正确的binlog position">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">GTID</label>
+                        <input type="text" class="set_dump_executed_gtid_set form-control" name="set_dump_executed_gtid_set"
+                               placeholder="请输入正确的 gtid">
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="admin_set_binlog()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 初始化 设置binlog modal
+    function init_set_binlog_modal(row) {
+        var key = row.Host + ":" + row.Port;
+        $("#set_binlog_host_combobox").empty();
+        var combobox = "<option value=''>请选择</option>";
+        combobox += ("<option value='" + key + "'>" + key + "</option>");
+        $("#set_binlog_host_combobox").append(combobox);
+        $("#set_binlog_host_combobox").val(key);
+
+        // 请求获取bin log 文件
+        $.ajax({
+            type: "POST",
+            url: "/admin/binlog/files",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(row), // 空串
+            success: function (rst, status) { // result 返回 mysql-bin.000142:92749729472
+                if (rst.code == 1000) {
+                    $("#set_binlog_file_combobox").empty();
+                    var binlogs = "<option value=''>binlog文件名:文件size</option>";
+                    for (var i = 0; i < rst.message.length; i++) {
+                        var file = rst.message[i].split(":")[0];
+                        binlogs += ("<option value='" + file + "'>" + rst.message[i] + "</option>");
+                    }
+                    $("#set_binlog_file_combobox").append(binlogs);
+                    return
+                }
+                showMessage(rst.message);
+            }
+        });
+
+        $("#set_binlog_file_combobox").val(row.BinlogFile);
+        $(".set_binlog_position").val(row.BinlogPos);
+        $(".set_dump_executed_gtid_set").val(row.ExecutedGtidSet);
+    }
+
+    $("#admin_set_binlog_modal").on("hide.bs.modal", function () {
+        // 清空
+        $("#set_binlog_host_combobox").val("");
+        $("#set_binlog_file_combobox").val("");
+        $(".set_binlog_position").val("");
+        $(".set_dump_executed_gtid_set").val("");
+    });
+
+</script>
