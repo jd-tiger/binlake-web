@@ -32,7 +32,7 @@ tower是整个binlake集群管理平台: 使用的beego框架, 采用bootstrap�
 ## 使用说明 
 
 * 下图是元数据设计的表信息  
-    ![image](./binlake-tower元数据设计图.jpg)
+    ![image](./doc/binlake-tower元数据设计图.jpg)
 
 * 设有超级管理员人员配置  
     **超级管理员有所有分组的增删改权限**  
