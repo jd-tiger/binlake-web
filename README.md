@@ -166,5 +166,11 @@ tower是整个binlake集群管理平台: 使用的beego框架, 采用bootstrap�
         url = http://test.ssa.jd.com/sso/
         ```
 
+## 交流 
 
+* wx 群   
+    欢迎wx 搜索 binlake 
+
+* mail 邮件  
+    pengaan@163.com  
 
