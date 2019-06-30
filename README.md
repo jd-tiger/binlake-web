@@ -63,7 +63,7 @@ tower是整个binlake集群管理平台: 使用的beego框架, 采用bootstrap�
         无id 但是有主键 primary key{erp}
 
 * 表字段说明  
-    [详见创建表注释](conf/tower.sql)
+    [详见创建表注释](./conf/tower.sql)
 
 
 * dbs 交互说明  
