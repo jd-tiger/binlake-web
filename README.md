@@ -82,9 +82,9 @@ tower是整个binlake集群管理平台: 使用的beego框架, 采用bootstrap�
 
   
 ## 使用说明  
-* 前提 
-    依赖于go环境
-    本地go 版本 **go version go1.12 linux/amd64**
+* 前提   
+    依赖于go环境  
+    本地go 版本 **go version go1.12 linux/amd64**  
 
 * 编译过程  
     * cd binlake-web目录  
@@ -171,6 +171,10 @@ tower是整个binlake集群管理平台: 使用的beego框架, 采用bootstrap�
         [sso]
         url = http://test.ssa.jd.com/sso/
         ```
+     
+          
+## 部署样例  
+[部署example](./doc/example.md)
 
 ## 交流 
 
